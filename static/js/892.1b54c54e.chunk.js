@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkreact_dev=self.webpackChunkreact_dev||[]).push([[892],{892:(e,a,c)=>{e.exports=c.p+"static/media/Gobang.31d6cfe0d16ae931b73c"}}]);
