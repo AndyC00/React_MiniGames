@@ -35,7 +35,7 @@ export default function Gomoku({ size = 19, cell = 36 }) {
                 </span>
                 {winner && (
                     <span>
-                        Winner: {winner === BLACK ? <b>Black ●</b> : <b>White ○</b>}
+                        Winner: {winner === BLACK ? <b>Player 1 Black ●</b> : <b>Player 2: White ○</b>}
                     </span>
                 )}
             </div>
