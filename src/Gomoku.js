@@ -14,7 +14,7 @@ function createEmptyBoard(n) {
  * @param {number} cell - pixiel per block
  */
 
-export default function Gomoku({ size = 15, cell = 36 }) {
+export default function Gomoku({ size = 19, cell = 36 }) {
     const [board, setBoard] = useState(() => createEmptyBoard(size));
     const [current, setCurrent] = useState(BLACK); // black first
     const [winner, setWinner] = useState(null);
