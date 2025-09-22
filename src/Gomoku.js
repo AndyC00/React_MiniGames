@@ -20,9 +20,29 @@ export default function Gomoku({ size = 19, cell = 36 }) {
     const [winner, setWinner] = useState(null);
     const [winningLine, setWinningLine] = useState([]);
 
-    // TODO: place chesse and next round
     function handleCellClick(r, c) {
-        console.log(`clicked cell -> row:${r}, col:${c}`);
+        if (winner || board[r][c] !== EMPTY) return;
+
+        const next = board.map(row => row.slice());
+        next[r][c] = current;   // place chess
+
+        // update the board
+        setBoard(next);
+
+        // check the winner:
+        // const result = checkWinner(r, c, next);
+        // if (result?.winner) {
+        //   setWinner(result.winner);
+        //   setWinningLine(result.line);
+        //   return;
+        // }
+
+        setCurrent(p => (p === BLACK ? WHITE : BLACK));
+    }
+
+    function checkWinner(r, c, board) {
+
+
 
     }
 
