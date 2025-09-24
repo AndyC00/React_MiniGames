@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 
 // const parameters
 const EMPTY = 0, BLACK = 1, WHITE = 2;
-const PIECE_CHAR = { [EMPTY]: "", [BLACK]: "●", [WHITE]: "○" };
+const PIECE_CHAR = { [EMPTY]: "", [BLACK]: "🐮", [WHITE]: "1️⃣" };
 
 // create the chesse board
 function createEmptyBoard(n) {
@@ -84,11 +84,11 @@ export default function Gomoku({ size = 19, cell = 36 }) {
             <div className="gomoku-panel">
                 <strong>Gomoku</strong>
                 <span>
-                    Turn: {current === BLACK ? <b>Black ●</b> : <b>White ○</b>}
+                    Turn: {current === BLACK ? <b>🐮</b> : <b>1️⃣</b>}
                 </span>
                 {winner && (
                     <span>
-                        Winner: {winner === BLACK ? <b>Player 1 Black ●</b> : <b>Player 2: White ○</b>}
+                        Winner: {winner === BLACK ? <b>Player 1 🐮</b> : <b>Player 2: 1️⃣</b>}
                     </span>
                 )}
             </div>

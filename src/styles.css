@@ -114,5 +114,6 @@ body {
 }
 
 .gomoku-cell.win {
-  outline: 3px solid rgba(0, 0, 0, 0.6);
+  outline: 3px solid rgba(76, 192, 210, 0.6);
+  background: linear-gradient(135deg, #afd45a, #f3d767);
 }
