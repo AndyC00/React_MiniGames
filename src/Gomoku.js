@@ -4,9 +4,58 @@ import React, { useMemo, useState } from "react";
 const EMPTY = 0, BLACK = 1, WHITE = 2;
 const PIECE_CHAR = { [EMPTY]: "", [BLACK]: "🐮", [WHITE]: "1️⃣" };
 
+const DIRS = [
+    [0, 1],   // →
+    [1, 0],   // ↓
+    [1, 1],   // ↘
+    [1, -1],  // ↙
+];
+
 // create the chesse board
 function createEmptyBoard(n) {
     return Array.from({ length: n }, () => Array(n).fill(EMPTY));
+}
+
+// check if out of the board bundary
+function inBounds(board, r, c) {
+    const rows = board.length;
+    const cols = rows > 0 ? board[0].length : 0;
+    return r >= 0 && r < rows && c >= 0 && c < cols;
+}
+
+function collectLine(board, r, c, dr, dc) {
+    const color = board[r][c];
+    if (color === EMPTY) return [];
+
+    const line = [[r, c]];
+
+    // forward
+    let rr = r + dr, cc = c + dc;
+    while (inBounds(board, rr, cc) && board[rr][cc] === color) {
+        line.push([rr, cc]);
+        rr += dr; cc += dc;
+    }
+
+    // reverse
+    rr = r - dr; cc = c - dc;
+    while (inBounds(board, rr, cc) && board[rr][cc] === color) {
+        line.unshift([rr, cc]);
+        rr -= dr; cc -= dc;
+    }
+
+    return line;
+}
+
+function checkWinner(r, c, board) {
+    const color = board[r][c];
+    if (color === EMPTY) return null;
+
+    for (const [dr, dc] of DIRS) {
+        const line = collectLine(board, r, c, dr, dc, color);
+
+        if (line.length >= 5) return { winner: color, line }; // highlight the line of 5
+    }
+    return null;
 }
 
 /**
@@ -19,46 +68,6 @@ export default function Gomoku({ size = 19, cell = 36 }) {
     const [current, setCurrent] = useState(BLACK); // black first
     const [winner, setWinner] = useState(null);
     const [winningLine, setWinningLine] = useState([]);
-
-    function inBounds(r, c) {
-        return r >= 0 && r < size && c >= 0 && c < size;
-    }
-
-    function collectLine(board, r, c, dr, dc, color) {
-        const line = [[r, c]];
-        // forward
-        let rr = r + dr, cc = c + dc;
-        while (inBounds(rr, cc) && board[rr][cc] === color) {
-            line.push([rr, cc]);
-            rr += dr; cc += dc;
-        }
-        // converse
-        rr = r - dr; cc = c - dc;
-        while (inBounds(rr, cc) && board[rr][cc] === color) {
-            line.unshift([rr, cc]);
-            rr -= dr; cc -= dc;
-        }
-        return line;
-    }
-
-    function checkWinner(r, c, board) {
-        const color = board[r][c];
-        if (color === EMPTY) return null;
-
-        const directions = [
-            [0, 1],   // →
-            [1, 0],   // ↓
-            [1, 1],   // ↘
-            [1, -1],  // ↙
-        ];
-
-        for (const [dr, dc] of directions) {
-            const line = collectLine(board, r, c, dr, dc, color);
-
-            if (line.length >= 5) return { winner: color, line }; // highlight the line of 5
-        }
-        return null;
-    }
 
     function handleCellClick(r, c) {
         if (winner || board[r][c] !== EMPTY) return;
