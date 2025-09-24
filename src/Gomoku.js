@@ -20,30 +20,63 @@ export default function Gomoku({ size = 19, cell = 36 }) {
     const [winner, setWinner] = useState(null);
     const [winningLine, setWinningLine] = useState([]);
 
+    function inBounds(r, c) {
+        return r >= 0 && r < size && c >= 0 && c < size;
+    }
+
+    function collectLine(board, r, c, dr, dc, color) {
+        const line = [[r, c]];
+        // forward
+        let rr = r + dr, cc = c + dc;
+        while (inBounds(rr, cc) && board[rr][cc] === color) {
+            line.push([rr, cc]);
+            rr += dr; cc += dc;
+        }
+        // converse
+        rr = r - dr; cc = c - dc;
+        while (inBounds(rr, cc) && board[rr][cc] === color) {
+            line.unshift([rr, cc]);
+            rr -= dr; cc -= dc;
+        }
+        return line;
+    }
+
+    function checkWinner(r, c, board) {
+        const color = board[r][c];
+        if (color === EMPTY) return null;
+
+        const directions = [
+            [0, 1],   // →
+            [1, 0],   // ↓
+            [1, 1],   // ↘
+            [1, -1],  // ↙
+        ];
+
+        for (const [dr, dc] of directions) {
+            const line = collectLine(board, r, c, dr, dc, color);
+
+            if (line.length >= 5) return { winner: color, line }; // highlight the line of 5
+        }
+        return null;
+    }
+
     function handleCellClick(r, c) {
         if (winner || board[r][c] !== EMPTY) return;
 
         const next = board.map(row => row.slice());
         next[r][c] = current;   // place chess
 
-        // update the board
+        // update the board and check winner
+        const result = checkWinner(r, c, next);
         setBoard(next);
 
-        // check the winner:
-        // const result = checkWinner(r, c, next);
-        // if (result?.winner) {
-        //   setWinner(result.winner);
-        //   setWinningLine(result.line);
-        //   return;
-        // }
+        if (result) {
+            setWinner(result.winner);
+            setWinningLine(result.line);
+            return;
+        }
 
         setCurrent(p => (p === BLACK ? WHITE : BLACK));
-    }
-
-    function checkWinner(r, c, board) {
-
-
-
     }
 
     return (
