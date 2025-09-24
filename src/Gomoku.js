@@ -68,12 +68,23 @@ export default function Gomoku({ size = 19, cell = 36 }) {
     const [current, setCurrent] = useState(BLACK); // black first
     const [winner, setWinner] = useState(null);
     const [winningLine, setWinningLine] = useState([]);
+    const [lastSnapshot, setLastSnapshot] = useState(null); // board, current
+    const [canUndo, setCanUndo] = useState(false);
 
     function handleCellClick(r, c) {
         if (winner || board[r][c] !== EMPTY) return;
 
+        // save last board snapshot
+        const snapshot = {
+            board: board.map(row => row.slice()),
+            current: current,
+        };
+        setLastSnapshot(snapshot);
+        setCanUndo(true);
+
+        // copy board and place chess
         const next = board.map(row => row.slice());
-        next[r][c] = current;   // place chess
+        next[r][c] = current;
 
         // update the board and check winner
         const result = checkWinner(r, c, next);
@@ -88,22 +99,48 @@ export default function Gomoku({ size = 19, cell = 36 }) {
         setCurrent(p => (p === BLACK ? WHITE : BLACK));
     }
 
+    function handleUndo() {
+        if (!canUndo || !lastSnapshot) return;
+
+        setBoard(lastSnapshot.board);
+        setCurrent(lastSnapshot.current);
+        setWinner(null);
+        setWinningLine([]);
+
+        setCanUndo(false);
+        setLastSnapshot(null);
+    }
+
+    function handleReset() {
+        setBoard(createEmptyBoard(size));
+        setCurrent(BLACK);
+        setWinner(null);
+        setWinningLine([]);
+        setCanUndo(false);
+        setLastSnapshot(null);
+    }
+
     return (
         <div className="gomoku">
-            <div className="gomoku-panel">
+            <div className="gomoku_panel">
                 <strong>Gomoku</strong>
                 <span>
-                    Turn: {current === BLACK ? <b>🐮</b> : <b>1️⃣</b>}
+                    Turn: {current === BLACK ? <b>🐮</b> : <b>👈1️⃣</b>}
                 </span>
                 {winner && (
                     <span>
-                        Winner: {winner === BLACK ? <b>Player 1 🐮</b> : <b>Player 2: 1️⃣</b>}
+                        Winner: {winner === BLACK ? <b>Player 🐮</b> : <b>Player 👈1️⃣</b>}
                     </span>
                 )}
             </div>
 
+            <div className="gomoku_operation">
+                <button onClick={handleUndo} disabled={!canUndo}>Undo</button>
+                <button onClick={handleReset}>Reset</button>
+            </div>
+
             <div
-                className="gomoku-board"
+                className="gomoku_board"
                 style={{
                     gridTemplateColumns: `repeat(${size}, ${cell}px)`,
                     gridTemplateRows: `repeat(${size}, ${cell}px)`,
@@ -117,7 +154,7 @@ export default function Gomoku({ size = 19, cell = 36 }) {
                         return (
                             <button
                                 key={`${r}-${c}`}
-                                className={`gomoku-cell ${isWinCell ? "win" : ""}`}
+                                className={`gomoku_cell ${isWinCell ? "win" : ""}`}
                                 onClick={() => handleCellClick(r, c)}
                                 aria-label={`row ${r + 1}, col ${c + 1}, ${val === EMPTY ? "empty" : val === BLACK ? "black" : "white"
                                     }`}

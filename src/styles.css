@@ -75,18 +75,18 @@ body {
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
 }
 
-.gomoku-panel {
+.gomoku_panel {
   display: flex;
   gap: 12px;
   align-items: center;
   margin-bottom: 12px;
 }
 
-.gomoku-panel strong {
+.gomoku_panel strong {
   font-size: 18px;
 }
 
-.gomoku-board {
+.gomoku_board {
   display: grid;
   gap: 2px;
   background: #dcb35c;
@@ -97,7 +97,7 @@ body {
   width: max-content;
 }
 
-.gomoku-cell {
+.gomoku_cell {
   background: linear-gradient(180deg, #e7c36a, #d1a348);
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 6px;
@@ -109,11 +109,17 @@ body {
   line-height: 1;
 }
 
-.gomoku-cell:active {
+.gomoku_cell:active {
   transform: scale(0.95);
 }
 
-.gomoku-cell.win {
+.gomoku_cell.win {
   outline: 3px solid rgba(76, 192, 210, 0.6);
   background: linear-gradient(135deg, #afd45a, #f3d767);
+}
+
+.gomoku_operation {
+  margin-bottom: 10px;
+  display: flex;
+  gap: 8px;
 }
