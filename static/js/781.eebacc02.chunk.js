@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkreact_dev=self.webpackChunkreact_dev||[]).push([[781],{781:(e,d,r)=>{r.r(d),r.d(d,{default:()=>s});r(43);var c=r(579);function s(){return(0,c.jsx)("div",{children:(0,c.jsx)("p",{children:"Please type \"number of dices + 'd' + number of sides on the dice\" to roll the dice"})})}}}]);
-//# sourceMappingURL=781.eebacc02.chunk.js.map
