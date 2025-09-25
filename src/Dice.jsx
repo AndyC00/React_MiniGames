@@ -1,5 +1,61 @@
 import React, { useState, useRef, useEffect } from 'react';
 
+// constants:
+const DICE_RE = /(?<!\d)(\d*)\s*[dD]\s*(\d+)(?!\d)/g;
+
+// tool functions:
+export function trimMessage(message) {
+  const results = [];
+  let m;
+
+  while ((m = DICE_RE.exec(message)) !== null) {
+    const count = m[1] ? parseInt(m[1], 10) : 1;
+    const sides = parseInt(m[2], 10);
+
+    if (count > 0 && sides > 0) {
+      results.push({ count, sides, raw: m[0].trim() });
+    }
+  }
+  return results;
+}
+
+export function rollOnce(sides) {
+  return Math.floor(Math.random() * sides) + 1;
+}
+
+export function rollDice(count, sides) {
+  const rolls = Array.from({ length: count }, () => rollOnce(sides));
+  const total = rolls.reduce((a, b) => a + b, 0);
+  return { rolls, total };
+}
+
+export function rollFromText(text) {
+  const specs = trimMessage(text);
+
+  return specs.map(spec => ({
+    spec,
+    ...rollDice(spec.count, spec.sides),
+  }));
+}
+
+export function formatRollResults(results) {
+  if (!results || results.length === 0) return null;
+
+  const lines = results.map((r, i) => {
+    const rollsStr = r.rolls.join(', ');
+    return `Results : ${r.total}      (${rollsStr})`;
+  });
+
+  // in case if multiple rolls, show grand total
+  if (results.length > 1) {
+    const grandTotal = results.reduce((s, r) => s + r.total, 0);
+    lines.push(`Total Sum: ${grandTotal}`);
+  }
+
+  return lines.join('\n');
+}
+
+// main component:
 export default function DiceRolling() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -69,9 +125,16 @@ export default function DiceRolling() {
   const generateResponse = async (_messageHistory) => {
     setLoading(true);
     setError(null);
+
     try {
-      setMessages(prev => [...prev, { type: 'robot', content: 'ok', id: uuid() }]);
-    } finally {
+      const lastHuman = [..._messageHistory].reverse().find(m => m.type === 'human');
+      const text = lastHuman?.content ?? '';
+      const results = rollFromText(text);
+      const content = results.length ? formatRollResults(results) : ' ';
+
+      setMessages(prev => [...prev, { type: 'robot', content, id: uuid() }]);
+    }
+    finally {
       setLoading(false);
       inputRef.current?.focus();
     }
@@ -241,7 +304,7 @@ export default function DiceRolling() {
 
       <div className="dice_instruction">
         <p>
-          Please type "number of dices + 'd' + number of sides on the dice" to roll the dice
+          Please type "number of dice + 'd' + number of sides on the dice" to roll the dice
         </p>
         <p>
           This app is aim to log and track your dice numbers and what happens when playing table games

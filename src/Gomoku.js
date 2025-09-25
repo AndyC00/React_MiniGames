@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 
 // const parameters
 const EMPTY = 0, BLACK = 1, WHITE = 2;
-const PIECE_CHAR = { [EMPTY]: "", [BLACK]: "🐮", [WHITE]: "1️⃣" };
+const PIECE_CHAR = { [EMPTY]: "", [BLACK]: "🐮", [WHITE]: "🐷" };
 
 const DIRS = [
     [0, 1],   // →
@@ -125,11 +125,11 @@ export default function Gomoku({ size = 19, cell = 36 }) {
             <div className="gomoku_panel">
                 <strong>Gomoku</strong>
                 <span>
-                    Turn: {current === BLACK ? <b>🐮</b> : <b>👈1️⃣</b>}
+                    Turn: {current === BLACK ? <b>🐮</b> : <b>🐷</b>}
                 </span>
                 {winner && (
                     <span>
-                        Winner: {winner === BLACK ? <b>Player 🐮</b> : <b>Player 👈1️⃣</b>}
+                        Winner: {winner === BLACK ? <b>Player 🐮</b> : <b>Player 🐷</b>}
                     </span>
                 )}
             </div>
