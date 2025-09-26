@@ -323,7 +323,6 @@ export default function DiceRolling() {
         </p>
       </div>
 
-      <div className="app">
         <div className="chat-container">
           <div className="messages">
             {messages.map(renderMessage)}
@@ -337,6 +336,7 @@ export default function DiceRolling() {
             {error && <div className="error-message">Error: {error}</div>}
             <div ref={messagesEndRef} />
           </div>
+          
           <form onSubmit={handleSubmit} className="input-form">
             <input
               ref={inputRef}
@@ -352,7 +352,6 @@ export default function DiceRolling() {
             </button>
           </form>
         </div>
-      </div>
 
     </div>
   );

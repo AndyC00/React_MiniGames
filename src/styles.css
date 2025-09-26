@@ -29,6 +29,24 @@ body {
   padding: 0;
 }
 
+/* Title page styles: */
+.app {
+  text-align: center;
+}
+
+.app label {
+  font-size: 20px;
+  color: #4cc0d2;
+  font-style: bold;
+}
+
+.app select {
+  font-size: 16px;
+  padding: 7px;
+  margin-left: 8px;
+  color: #4cc0d2;
+}
+
 /* Tic Tac Toe styles: */
 .square {
   background: #fff;
@@ -122,4 +140,27 @@ body {
   margin-bottom: 10px;
   display: flex;
   gap: 8px;
+}
+
+.gomoku_operation button {
+  background: #4cc0d2;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 16px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Dice roller styles */
+.dice_instruction {
+  margin-bottom: 30px;
+  font-size: medium;
+  font-style: italic;
+}
+
+.dice_container {
+  flex-direction: column;
+  gap: 20px;
 }
