@@ -164,3 +164,15 @@ body {
   flex-direction: column;
   gap: 20px;
 }
+
+.edit-buttons button, .message-wrapper button, .input-form button {
+  background: #4cc0d2;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 6px 8px;
+  transition: background-color 0.2s ease-in-out;
+  margin: 3px;
+}
