@@ -45,7 +45,7 @@ export function formatRollResults(results) {
     const rollsStr = r.rolls.join(', ');
     return (
       <div className="dice-line" key={i}>
-        Results :
+        🎲Results :
         {' '}
         <span className="dice-total">{r.total}</span>
         {'  ('}
@@ -94,8 +94,10 @@ export default function DiceRolling() {
   const uuid = () => (crypto?.randomUUID ? crypto.randomUUID() : Date.now().toString());
   const cloneMsgs = (arr) => arr.map(m => ({ ...m }));
   const msgsEqual = (a, b) =>
-    a.length === b.length &&
-    a.every((m, i) => m.id === b[i].id && m.type === b[i].type && m.content === b[i].content);
+    a.length === b.length
+    && a.every((m, i) => m.id === b[i].id
+      && m.type === b[i].type
+      && m.content === b[i].content);
 
   const handleReset = () => {
     if (!window.confirm('Clear all messages and history?')) return;
