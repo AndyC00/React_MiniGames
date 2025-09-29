@@ -3,6 +3,21 @@ import { useState, useRef, useEffect } from 'react';
 // constants:
 const DICE_RE = /(?<!\d)(\d*)\s*[dD]\s*(\d+)(?!\d)/g;
 
+const QUICK_BUTTONS = [
+  { id: 'q1', text: 'You rolled a dice with 4 sides: 1d4', bg: '/image/dice.png' },
+  { id: 'q2', text: 'You rolled a dice with 6 sides: 1d6', bg: '/image/dice.png' },
+  { id: 'q3', text: 'You rolled a dice with 10 sides: 1d10', bg: '/image/dice.png' },
+  { id: 'q4', text: 'You rolled a dice with 12 sides: 1d12', bg: '/image/dice.png' },
+  { id: 'q5', text: 'You rolled a dice with 100 sides: 1d100', bg: '/image/dice.png' },
+];
+
+const renderBody = (m) => {
+  if (m.type === 'reply' && m.content?.kind === 'roll') {
+    return formatRollResults(m.content.results);
+  }
+  return m.content;
+};
+
 // tool functions:
 export function trimMessage(message) {
   const results = [];
@@ -68,12 +83,6 @@ export function formatRollResults(results) {
   return <div className="dice-results">{lines}</div>;
 }
 
-const renderBody = (m) => {
-  if (m.type === 'reply' && m.content?.kind === 'roll') {
-    return formatRollResults(m.content.results);
-  }
-  return m.content;
-};
 
 // ------------------------main component------------------------
 export default function DiceRolling() {
@@ -108,6 +117,19 @@ export default function DiceRolling() {
     setEditText('');
     setError(null);
     inputRef.current?.focus();
+  };
+
+  const sendQuick = async (text) => {
+    if (!text || loading) return;
+    setError(null);
+    const newUserMessage = {
+      type: 'user',
+      content: text,
+      id: Date.now().toString(),
+    };
+    const snapshot = [...messages, newUserMessage];
+    setMessages(snapshot);
+    await generateResponse(snapshot);
   };
 
   useEffect(() => {
@@ -342,24 +364,12 @@ export default function DiceRolling() {
       <p className="dice-title"><strong>🎲 Table Dice Roller 🎲</strong></p>
 
       <div className="dice-instruction">
-        <p>
-          Please type "number of dice + 'd' + number of sides on the dice" to roll the dice
-        </p>
-        <p>
-          This app is aimed to log and track your dice numbers and what happens when playing table games
-        </p>
-        <p>
-          Feel free to type some notes, it will keep your notes until you reload this web page
-        </p>
-        <p>
-          Example of use:
-        </p>
-        <p>
-          "I got damaged from a ghoul, received damage 1 d 6"
-        </p>
-        <p>
-          "I observed a murder, my sanity got hurt 1 d 4"
-        </p>
+        <p>Please type "number of dice + 'd' + number of sides on the dice" to roll the dice</p>
+        <p>This app is aimed to log and track your dice numbers and what happens when playing table games</p>
+        <p>Feel free to type some notes, it will keep your notes until you reload this web page</p>
+        <p>Example of use:</p>
+        <p>"I got damaged from a ghoul, received damage 1 d 6"</p>
+        <p>"I observed a murder, my sanity got hurt 1 d 4"</p>
       </div>
 
       <div className="chat-container">
@@ -401,6 +411,21 @@ export default function DiceRolling() {
       >
         Reset
       </button>
+
+      <div className="quickbar">
+        {QUICK_BUTTONS.map(btn => (
+          <button
+            key={btn.id}
+            type="button"
+            className="quick-btn"
+            title={btn.text}
+            aria-label={btn.text}
+            disabled={loading}
+            onClick={() => sendQuick(btn.text)}
+            style={{ backgroundImage: `url(${btn.bg})` }}
+          />
+        ))}
+      </div>
 
     </div>
   );
