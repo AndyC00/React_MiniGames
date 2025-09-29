@@ -18,7 +18,7 @@ export default function App() {
       <label>
         Please select: 
         <select value={selectedGame} onChange={(e) => setSelectedGame(e.target.value)}>
-          <option value="">  </option>
+          <option value=""> Selecting Page </option>
           {Object.entries(gameRegistry).map(([key, game]) => (
             <option key={key} value={key}>{game.label}</option>
           ))}
@@ -30,7 +30,7 @@ export default function App() {
           <SelectedGame />
         </Suspense>
       ) : (
-        <p>Please select a project to play</p>
+        <p>🌟Please select a project to play🌟</p>
       )}
     </div>
   );

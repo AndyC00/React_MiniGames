@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 // constants:
 const DICE_RE = /(?<!\d)(\d*)\s*[dD]\s*(\d+)(?!\d)/g;
@@ -43,19 +43,39 @@ export function formatRollResults(results) {
 
   const lines = results.map((r, i) => {
     const rollsStr = r.rolls.join(', ');
-    return `Results : ${r.total}      (${rollsStr})`;
+    return (
+      <div className="dice-line" key={i}>
+        Results :
+        {' '}
+        <span className="dice-total">{r.total}</span>
+        {'  ('}
+        <span className="dice-rolls">{rollsStr}</span>
+        {')'}
+      </div>
+    );
   });
 
   // in case if multiple rolls, show grand total
   if (results.length > 1) {
     const grandTotal = results.reduce((s, r) => s + r.total, 0);
-    lines.push(`Total Sum: ${grandTotal}`);
+    lines.push(
+      <div className="dice-grand" key="grand">
+        Total Sum: <span className="dice-grand-total">{grandTotal}</span>
+      </div>
+    );
   }
 
-  return lines.join('\n');
+  return <div className="dice-results">{lines}</div>;
 }
 
-// main component:
+const renderBody = (m) => {
+  if (m.type === 'reply' && m.content?.kind === 'roll') {
+    return formatRollResults(m.content.results);
+  }
+  return m.content;
+};
+
+// ------------------------main component------------------------
 export default function DiceRolling() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -111,7 +131,7 @@ export default function DiceRolling() {
     setError(null);
 
     const newUserMessage = {
-      type: 'human',
+      type: 'user',
       content: userMessage,
       id: Date.now().toString(),
     };
@@ -127,12 +147,18 @@ export default function DiceRolling() {
     setError(null);
 
     try {
-      const lastHuman = [..._messageHistory].reverse().find(m => m.type === 'human');
-      const text = lastHuman?.content ?? '';
+      const lastUser = [..._messageHistory].reverse().find(m => m.type === 'user');
+      const text = lastUser?.content ?? '';
       const results = rollFromText(text);
-      const content = results.length ? formatRollResults(results) : ' ';
-
-      setMessages(prev => [...prev, { type: 'robot', content, id: uuid() }]);
+      if (!results.length) return;
+      setMessages(prev => [
+        ...prev,
+        {
+          type: 'reply',
+          content: { kind: 'roll', results },
+          id: uuid(),
+        }
+      ]);
     }
     finally {
       setLoading(false);
@@ -157,7 +183,7 @@ export default function DiceRolling() {
     if (messageIndex === -1) return;
 
     const original = messages[messageIndex];
-    if (original.type !== 'human') return;
+    if (original.type !== 'user') return;
 
     const prefix = cloneMsgs(messages.slice(0, messageIndex));
     const originalSuffix = cloneMsgs(messages.slice(messageIndex + 1));
@@ -198,8 +224,8 @@ export default function DiceRolling() {
       };
     });
 
-    const editedHuman = { ...original, content: newContent };
-    const newMsgs = [...prefix, editedHuman];
+    const editedUser = { ...original, content: newContent };
+    const newMsgs = [...prefix, editedUser];
     setMessages(newMsgs);
     setEditingId(null);
     setEditText('');
@@ -221,9 +247,9 @@ export default function DiceRolling() {
         const idx = curr.findIndex(m => m.id === messageId);
         if (idx === -1) return curr;
         const prefix = cloneMsgs(curr.slice(0, idx));
-        const human = { ...curr[idx], content: selected.content };
+        const user = { ...curr[idx], content: selected.content };
         const suffix = cloneMsgs(selected.suffix);
-        return [...prefix, human, ...suffix];
+        return [...prefix, user, ...suffix];
       });
 
       return {
@@ -261,9 +287,9 @@ export default function DiceRolling() {
           </div>
         ) : (
           <div className="message-wrapper">
-            <div className="message-content">{message.content}</div>
+            <div className="message-content">{renderBody(message)}</div>
 
-            {message.type === 'human' && (
+            {message.type === 'user' && (
               <button onClick={() => startEdit(message)} className="edit-button" disabled={loading}>
                 Edit
               </button>
@@ -301,13 +327,14 @@ export default function DiceRolling() {
 
   return (
     <div>
+      <p className="dice-title"><strong>🎲 Table Dice Roller 🎲</strong></p>
 
-      <div className="dice_instruction">
+      <div className="dice-instruction">
         <p>
           Please type "number of dice + 'd' + number of sides on the dice" to roll the dice
         </p>
         <p>
-          This app is aim to log and track your dice numbers and what happens when playing table games
+          This app is aimed to log and track your dice numbers and what happens when playing table games
         </p>
         <p>
           Feel free to type some notes, it will keep your notes until you reload this web page
@@ -319,39 +346,39 @@ export default function DiceRolling() {
           "I got damaged from a ghoul, received damage 1 d 6"
         </p>
         <p>
-          "I obsered a murder, my sanity got hurt 1 d 4"
+          "I observed a murder, my sanity got hurt 1 d 4"
         </p>
       </div>
 
-        <div className="chat-container">
-          <div className="messages">
-            {messages.map(renderMessage)}
-            {loading && (
-              <div className="message assistant">
-                <div className="loading">
-                  <span></span><span></span><span></span>
-                </div>
+      <div className="chat-container">
+        <div className="messages">
+          {messages.map(renderMessage)}
+          {loading && (
+            <div className="message assistant">
+              <div className="loading">
+                <span></span><span></span><span></span>
               </div>
-            )}
-            {error && <div className="error-message">Error: {error}</div>}
-            <div ref={messagesEndRef} />
-          </div>
-          
-          <form onSubmit={handleSubmit} className="input-form">
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message..."
-              className="input-box"
-              disabled={loading}
-            />
-            <button type="submit" disabled={loading || !input.trim()}>
-              Send
-            </button>
-          </form>
+            </div>
+          )}
+          {error && <div className="error-message">Error: {error}</div>}
+          <div ref={messagesEndRef} />
         </div>
+
+        <form onSubmit={handleSubmit} className="input-form">
+          <input
+            ref={inputRef}
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type your message..."
+            className="input-box"
+            disabled={loading}
+          />
+          <button type="submit" disabled={loading || !input.trim()}>
+            Send
+          </button>
+        </form>
+      </div>
 
     </div>
   );

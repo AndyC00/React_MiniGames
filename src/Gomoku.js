@@ -123,7 +123,7 @@ export default function Gomoku({ size = 19, cell = 36 }) {
     return (
         <div className="gomoku">
             <div className="gomoku_panel">
-                <strong>Gomoku</strong>
+                <strong>♟️Gomoku</strong>
                 <span>
                     Turn: {current === BLACK ? <b>🐮</b> : <b>🐷</b>}
                 </span>

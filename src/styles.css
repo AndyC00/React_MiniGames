@@ -154,15 +154,10 @@ body {
 }
 
 /* Dice roller styles */
-.dice_instruction {
+.dice-instruction {
   margin-bottom: 30px;
   font-size: medium;
   font-style: italic;
-}
-
-.dice_container {
-  flex-direction: column;
-  gap: 20px;
 }
 
 .edit-buttons button, .message-wrapper button, .input-form button {
@@ -175,4 +170,24 @@ body {
   padding: 6px 8px;
   transition: background-color 0.2s ease-in-out;
   margin: 3px;
+}
+
+.dice-total {
+  color: #16a34a;
+}
+
+.dice-rolls, .dice-results {
+  color: #4e81f1;
+}
+
+.dice-grand {
+  color: #afd45a;
+}
+
+.dice-results {
+  margin-bottom: 16px;
+}
+
+.messages {
+  color: #3100b9;
 }
