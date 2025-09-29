@@ -77,6 +77,7 @@ const renderBody = (m) => {
 
 // ------------------------main component------------------------
 export default function DiceRolling() {
+  // inside states
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -88,15 +89,24 @@ export default function DiceRolling() {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
+  // inside functions
+  const scrollToBottom = () => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); };
   const uuid = () => (crypto?.randomUUID ? crypto.randomUUID() : Date.now().toString());
   const cloneMsgs = (arr) => arr.map(m => ({ ...m }));
   const msgsEqual = (a, b) =>
     a.length === b.length &&
     a.every((m, i) => m.id === b[i].id && m.type === b[i].type && m.content === b[i].content);
+
+  const handleReset = () => {
+    if (!window.confirm('Clear all messages and history?')) return;
+
+    setMessages([]);
+    setHistories({});
+    setEditingId(null);
+    setEditText('');
+    setError(null);
+    inputRef.current?.focus();
+  };
 
   useEffect(() => {
     setHistories(prev => {
@@ -379,6 +389,16 @@ export default function DiceRolling() {
           </button>
         </form>
       </div>
+
+      <button
+        type="button"
+        className="reset-btn"
+        onClick={handleReset}
+        aria-label="Reset all messages"
+        title="Reset"
+      >
+        Reset
+      </button>
 
     </div>
   );

@@ -191,3 +191,17 @@ body {
 .messages {
   color: #3100b9;
 }
+
+.reset-btn {
+  background: #5fdbee;
+  position: fixed;
+  right: 16px;
+  bottom: 24px;
+  z-index: 2;
+  padding: 10px 14px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.reset-btn:hover { filter: brightness(0.95); }
