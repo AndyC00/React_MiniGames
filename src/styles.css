@@ -221,8 +221,7 @@ body {
   height: 50px;
   padding: 0;
   border: none;
-  border-radius: 4px;        /* might need to delete? check the background image first */
-  background-color: #4da3ff;  /* set to transparent once got image */
+  background-color: transparent; 
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;

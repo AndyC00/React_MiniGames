@@ -2,13 +2,12 @@ import { useState, useRef, useEffect } from 'react';
 
 // constants:
 const DICE_RE = /(?<!\d)(\d*)\s*[dD]\s*(\d+)(?!\d)/g;
-
 const QUICK_BUTTONS = [
-  { id: 'q1', text: 'You rolled a dice with 4 sides: 1d4', bg: '/image/dice.png' },
-  { id: 'q2', text: 'You rolled a dice with 6 sides: 1d6', bg: '/image/dice.png' },
-  { id: 'q3', text: 'You rolled a dice with 10 sides: 1d10', bg: '/image/dice.png' },
-  { id: 'q4', text: 'You rolled a dice with 12 sides: 1d12', bg: '/image/dice.png' },
-  { id: 'q5', text: 'You rolled a dice with 100 sides: 1d100', bg: '/image/dice.png' },
+  { id: 'q1', text: 'You rolled a dice with 4 sides: 1d4', bg: `${process.env.PUBLIC_URL}/image/4sides.png` },
+  { id: 'q2', text: 'You rolled a dice with 6 sides: 1d6', bg: `${process.env.PUBLIC_URL}/image/6sides.png` },
+  { id: 'q3', text: 'You rolled a dice with 10 sides: 1d10', bg: `${process.env.PUBLIC_URL}/image/10sides.png` },
+  { id: 'q4', text: 'You rolled a dice with 12 sides: 1d12', bg: `${process.env.PUBLIC_URL}/image/12sides.png` },
+  { id: 'q5', text: 'You rolled a dice with 100 sides: 1d100', bg: `${process.env.PUBLIC_URL}/image/20sides.png` },
 ];
 
 const renderBody = (m) => {
