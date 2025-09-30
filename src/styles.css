@@ -244,3 +244,39 @@ body {
 
 
 /* -------------------------- 2048 styles -------------------------- */
+  .header2048 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .btn2048 {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #8f7a66;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .grid2048 {
+    display: grid;
+    gap: 10px;
+    background: #bbada0;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .cell2048 {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+    border-radius: 6px;
+    user-select: none;
+  }

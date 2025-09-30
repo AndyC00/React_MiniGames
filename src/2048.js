@@ -26,8 +26,57 @@ function addRandomTile(board) {
   return next;
 }
 
-export default function Game2048() {
-  return (<>
+function initBoard() {
+  let b = emptyBoard(SIZE);
+  b = addRandomTile(b);
+  b = addRandomTile(b);
+  return b;
+}
 
-  </>);
+function tileStyle(v) {
+  const palette = {
+    0: { background: '#cdc1b4', color: '#776e65' },
+    2: { background: '#eee4da', color: '#776e65' },
+    4: { background: '#ede0c8', color: '#776e65' },
+    8: { background: '#f2b179', color: '#f9f6f2' },
+    16: { background: '#f59563', color: '#f9f6f2' },
+    32: { background: '#f67c5f', color: '#f9f6f2' },
+    64: { background: '#f65e3b', color: '#f9f6f2' },
+    128: { background: '#edcf72', color: '#f9f6f2' },
+    256: { background: '#edcc61', color: '#f9f6f2' },
+    512: { background: '#edc850', color: '#f9f6f2' },
+    1024: { background: '#edc53f', color: '#f9f6f2' },
+    2048: { background: '#edc22e', color: '#f9f6f2' },
+  };
+  return palette[v] || palette[2048];
+}
+
+export default function Game2048() {
+  // inner const:
+  const [board, setBoard] = useState(() => initBoard());
+
+  // inner functions:
+  function handleNewGame() {
+    setBoard(initBoard());
+  }
+
+  return (
+  <>
+    <div className="header2048">
+      <h2>2048</h2>
+      <button className="btn2048" onClick={handleNewGame}>New Game</button>
+    </div>
+
+    <div className="grid2048" style={{ gridTemplateColumns: `repeat(${SIZE}, 1fr)` }}>
+      {board.map((row, r) =>
+        row.map((value, c) => (
+          <div key={`${r}-${c}`} className="cell2048" style={tileStyle(value)}>
+            {value || ""}
+          </div>
+        ))
+      )}
+    </div>
+  </>
+);
+
 }
