@@ -49,8 +49,8 @@ body {
 
 /* -------------------------- Tic Tac Toe styles -------------------------- */
 .square {
-  background: #fff;
-  border: 1px solid #999;
+  background: #f5f5da;
+  border: 2px solid #dcb35c;
   float: left;
   font-size: 24px;
   font-weight: bold;
@@ -85,6 +85,23 @@ body {
   background-color: rgba(34, 197, 94, 0.12);
   box-shadow: 0 0 12px rgba(34, 197, 94, 0.5);
   z-index: 1;
+}
+
+.game-info {
+  font-style: oblique;
+  color: #4e81f1;
+}
+
+.game-info button {
+  background: #4cc0d2;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 10px;
+  transition: background-color 0.2s ease-in-out;
+  margin-top: 10px;
 }
 
 /* -------------------------- Gomoku styles -------------------------- */

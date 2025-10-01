@@ -122,7 +122,7 @@ export default function Game() {
       description = 'Go to move #' + move;
     }
     else {
-      description = 'Go to game start';
+      description = 'Restart';
     }
 
     return (

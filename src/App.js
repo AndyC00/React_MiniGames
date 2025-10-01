@@ -3,7 +3,7 @@ import { useMemo, useState, Suspense, lazy } from "react";
 const gameRegistry = {
   ticTacToe: { label: "TicTacToe", loader: () => import("./TicTacToe") },
   gomoku:    { label: "Gomoku", loader: () => import("./Gomoku") },
-  diceRoller: { label: "Table Dice", loader: () => import("./Dice") },
+  diceRoller: { label: "Table Game Dice", loader: () => import("./Dice") },
   game2048: { label: "2048", loader: () => import("./2048") }
 };
 
