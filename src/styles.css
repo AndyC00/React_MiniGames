@@ -279,6 +279,7 @@ body {
   }
 
   .grid2048 {
+    grid-template-columns: repeat(var(--cols, 4), 1fr);
     display: grid;
     gap: 10px;
     background: #bbada0;
@@ -297,3 +298,35 @@ body {
     border-radius: 6px;
     user-select: none;
   }
+
+  .controls2048 {
+  display: grid;
+  grid-template-columns: repeat(3, 48px);
+  grid-template-rows: repeat(3, 48px);
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 12px;
+}
+
+  .arrowBtn2048 {
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+  padding: 0;
+}
+
+/* 2048 tile styles */
+.cell2048.v0    { background:#cdc1b4; color:#776e65; }
+.cell2048.v2    { background:#eee4da; color:#776e65; }
+.cell2048.v4    { background:#ede0c8; color:#776e65; }
+.cell2048.v8    { background:#f2b179; color:#f9f6f2; }
+.cell2048.v16   { background:#f59563; color:#f9f6f2; }
+.cell2048.v32   { background:#f67c5f; color:#f9f6f2; }
+.cell2048.v64   { background:#f65e3b; color:#f9f6f2; }
+.cell2048.v128  { background:#edcf72; color:#f9f6f2; }
+.cell2048.v256  { background:#edcc61; color:#f9f6f2; }
+.cell2048.v512  { background:#edc850; color:#f9f6f2; }
+.cell2048.v1024 { background:#edc53f; color:#f9f6f2; }
+.cell2048.v2048 { background:#edc22e; color:#f9f6f2; }
