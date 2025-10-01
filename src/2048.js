@@ -34,6 +34,7 @@ function initBoard() {
   return b;
 }
 
+// major merge logic:
 function mergeLineLeft(line) {
   const nums = line.filter(v => v !== 0);
   const merged = [];
@@ -83,6 +84,7 @@ function flipBoard(board) {
   return board.map(row => row.slice().reverse());
 }
 
+// apply move and merge
 function moveBoard(board, dir) {
   let working = board.map(row => row.slice());
 
@@ -192,9 +194,9 @@ export default function Game2048() {
   return (
    <>
       <div className="header2048">
-        <h2 style={{ margin: 0 }}>2048</h2>
+        <h2 className="title2048">2048</h2>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <span style={{ fontWeight: 700 }}>Score: {score}</span>
+          <span className="score2048">Score: {score}</span>
           <button className="btn2048" onClick={handleNewGame}>New Game</button>
         </div>
       </div>
@@ -211,15 +213,15 @@ export default function Game2048() {
 
       <div className="controls2048" role="group" aria-label="Move controls">
         <div />
-        <button className="btn2048 arrowBtn2048" onClick={() => handleMove("up")} aria-label="Up">↑</button>
+        <button className="btn2048 arrowBtn2048" onClick={() => handleMove("up")} aria-label="Up">🔼</button>
         <div />
 
-        <button className="btn2048 arrowBtn2048" onClick={() => handleMove("left")} aria-label="Left">←</button>
+        <button className="btn2048 arrowBtn2048" onClick={() => handleMove("left")} aria-label="Left">◀️</button>
         <div />
-        <button className="btn2048 arrowBtn2048" onClick={() => handleMove("right")} aria-label="Right">→</button>
+        <button className="btn2048 arrowBtn2048" onClick={() => handleMove("right")} aria-label="Right">▶️</button>
 
         <div />
-        <button className="btn2048 arrowBtn2048" onClick={() => handleMove("down")} aria-label="Down">↓</button>
+        <button className="btn2048 arrowBtn2048" onClick={() => handleMove("down")} aria-label="Down">🔽</button>
         <div />
       </div>
 

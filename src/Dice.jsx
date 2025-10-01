@@ -359,7 +359,7 @@ export default function DiceRolling() {
   };
 
   return (
-    <div>
+    <div className='dice-container'>
       <p className="dice-title"><strong>🎲 Table Dice Roller 🎲</strong></p>
 
       <div className="dice-instruction">

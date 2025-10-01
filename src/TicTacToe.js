@@ -133,7 +133,8 @@ export default function Game() {
   });
 
   return (
-    <div className="game">
+    <div className="ticGame">
+      <h2 className="ticHeader">Tic Tac Toe</h2>
       <div className="game-board">
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>

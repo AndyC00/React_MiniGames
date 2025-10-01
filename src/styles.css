@@ -49,19 +49,28 @@ body {
 }
 
 /* -------------------------- Tic Tac Toe styles -------------------------- */
+.ticGame {
+  margin-top: 30px;
+}
+
+.ticHeader {
+  color: #4cc0d2;
+  margin-bottom: 10px;
+}
+
 .square {
   background: #f5f5da;
   border: 2px solid #dcb35c;
   float: left;
-  font-size: 24px;
+  font-size: 40px;
   font-weight: bold;
-  line-height: 34px;
-  height: 34px;
+  line-height: 60px;
+  height: 60px;
   margin-right: -1px;
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  width: 34px;
+  width: 60px;
 }
 
 .board-row:after {
@@ -107,7 +116,8 @@ body {
 
 /* -------------------------- Gomoku styles -------------------------- */
 .gomoku {
-  display: inline-block;
+  display: block;
+  margin-top: 30px;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
 }
 
@@ -172,6 +182,11 @@ body {
 }
 
 /* -------------------------- Dice roller styles -------------------------- */
+.dice-container {
+  margin-top: 30px;
+  text-align: center;
+}
+
 .dice-instruction {
   margin-bottom: 30px;
   font-size: medium;
@@ -266,17 +281,32 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    margin-top: 30px;
+  }
+
+  .title2048 {
+    margin: 0;
+    color: #4cc0d2;
+  }
+
+  .score2048 {
+    font-weight: 700;
+    color: #e9922f;
   }
 
   .btn2048 {
+    background: #4cc0d2;
     padding: 6px 10px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    background: #8f7a66;
-    color: #fff;
+    color: white;
     font-weight: 600;
+  }
+
+  .btn2048:hover {
+    filter: brightness(1.1);
   }
 
   .grid2048 {
@@ -304,18 +334,22 @@ body {
   display: grid;
   grid-template-columns: repeat(3, 48px);
   grid-template-rows: repeat(3, 48px);
-  gap: 6px;
+  gap: 20px;
   justify-content: center;
   align-items: center;
-  margin-top: 12px;
+  margin-top: 30px;
 }
 
   .arrowBtn2048 {
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: 800;
-  line-height: 1;
+  font-style: bold;
+  font-size: 60px;
   padding: 0;
+  background-color: transparent;
+}
+
+.GameOver2048 {
+  color: saddlebrown;
+  font-size: large;
 }
 
 /* 2048 tile styles */
