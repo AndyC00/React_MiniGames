@@ -277,6 +277,12 @@ body {
 
 
 /* -------------------------- 2048 styles -------------------------- */
+.instruction2048 {
+  margin-top: 30px;
+  color: #4e81f1;
+  font-weight: bold;
+}
+
   .header2048 {
     display: flex;
     align-items: center;
@@ -365,3 +371,4 @@ body {
 .cell2048.v512  { background:#edc850; color:#f9f6f2; }
 .cell2048.v1024 { background:#edc53f; color:#f9f6f2; }
 .cell2048.v2048 { background:#edc22e; color:#f9f6f2; }
+

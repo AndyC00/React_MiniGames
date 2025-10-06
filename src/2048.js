@@ -192,7 +192,14 @@ export default function Game2048() {
   }, [over]);
 
   return (
-   <>
+   <div className="container2048">
+
+      <div className="instruction2048">
+        <p>Control Keys:</p>
+        <p>Buttons below or "AWSD" on your keyboard</p>
+        <p>Note: ?? can merge with all numbers</p>
+      </div>
+
       <div className="header2048">
         <h2 className="title2048">2048</h2>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
@@ -228,6 +235,7 @@ export default function Game2048() {
       {over && (
         <p className = "GameOver2048"> Game Over </p>
       )}
-    </>
+
+    </div>
   );
 }
