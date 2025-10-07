@@ -315,6 +315,13 @@ body {
     filter: brightness(1.1);
   }
 
+  .undoButton2048 {
+    margin-bottom: 10px;
+    margin-left: 310px;
+  }
+
+  .undoButton2048:disabled { opacity: .5; cursor: not-allowed; }
+
   .grid2048 {
     grid-template-columns: repeat(var(--cols, 4), 1fr);
     display: grid;

@@ -237,6 +237,11 @@ export default function Game2048() {
   const [board, setBoard] = useState(() => initBoard());
   const [score, setScore] = useState(0);
   const [over, setOver] = useState(false);
+  const [prevBoard, setPrevBoard] = useState(null);
+  const [prevScore, setPrevScore] = useState(0);
+  const [prevOver,  setPrevOver]  = useState(false);
+  const [canUndo,   setCanUndo]   = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const [animTiles, setAnimTiles] = useState([]);
   const [animPlay, setAnimPlay] = useState(false);
@@ -251,14 +256,25 @@ export default function Game2048() {
   // inner functions:
   function handleNewGame() {
     const b = initBoard();
-    setBoard(initBoard());
+    setBoard(b);
     setScore(0);
     setOver(false);
+
+    // clear animation
     setAnimTiles([]);
     setMovingFrom(new Set());
     setFlashCells(new Set());
+    setSpawnCells(new Set());
     setAnimPlay(false);
+    setIsAnimating(false);
 
+    // clear undo
+    setPrevBoard(null);
+    setPrevScore(0);
+    setPrevOver(false);
+    setCanUndo(false);
+
+    // 2 nums spawn when start new
     const initSpawn = [];
     for (let r = 0; r < SIZE; r++) {
       for (let c = 0; c < SIZE; c++) {
@@ -270,19 +286,27 @@ export default function Game2048() {
   }
 
   function handleMove(dir) {
-    if (over) return;
+    if (over || isAnimating) return;
 
     const { next, movedAny, gainedTotal, moves, mergedDest } = computeMoveWithTrace(board, dir);
     if (!movedAny) return;
 
+    // save snapshot for undo
+    setPrevBoard(board.map(row => row.slice()));
+    setPrevScore(score);
+    setPrevOver(over);
+    setCanUndo(true);
+
+    // play moving animation
+    setIsAnimating(true);
     setAnimTiles(moves);
     setMovingFrom(new Set(moves.map(m => keyOf(m.fromR, m.fromC))));
     setAnimPlay(false);
-
     requestAnimationFrame(() => requestAnimationFrame(() => setAnimPlay(true)));
 
     window.setTimeout(() => {
       const withTile = addRandomTile(next);
+
       const spawn = findSpawnKeys(next, withTile);
       if (spawn.length) {
         setSpawnCells(new Set(spawn));
@@ -297,7 +321,28 @@ export default function Game2048() {
       if (isGameOver(withTile)) setOver(true);
 
       window.setTimeout(() => setFlashCells(new Set()), FLASH_MS);
+      setIsAnimating(false);
     }, MOVE_MS);
+  }
+
+  function handleUndo() {
+    if (!canUndo || isAnimating) return;
+    if (!prevBoard) return;
+
+    // back to last snapshot
+    setBoard(prevBoard);
+    setScore(prevScore);
+    setOver(prevOver);
+
+    // clear
+    setAnimTiles([]);
+    setMovingFrom(new Set());
+    setFlashCells(new Set());
+    setSpawnCells(new Set());
+    setAnimPlay(false);
+
+    // allow only one undo at a time
+    setCanUndo(false);
   }
 
   useEffect(() => {
@@ -341,6 +386,15 @@ export default function Game2048() {
       </div>
 
       {over && (<p className="GameOver2048"> Game Over </p>)}
+
+      <div className="undoButton2048wapper">
+        <button 
+          className="btn2048 undoButton2048"
+          onClick={handleUndo}
+          disabled={!canUndo || isAnimating}>
+            Undo
+        </button>
+      </div>
 
       <div className="boardWrap2048">
         <div className="grid2048" style={{ "--cols": SIZE }}>
