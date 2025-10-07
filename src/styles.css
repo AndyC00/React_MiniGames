@@ -402,3 +402,12 @@ body {
   100% { box-shadow: none; transform: scale(1.0); }
 }
 .flash2048 { animation: flash2048-kf 30ms ease-out; }
+
+@keyframes spawn2048-kf {
+  0%   { transform: scale(0.6); opacity: 0.4; }
+  60%  { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1.0); }
+}
+.spawn2048 {
+  animation: spawn2048-kf 140ms ease-out; /* must align with SPAWN_MS */
+}

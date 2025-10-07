@@ -82,6 +82,18 @@ function flipBoard(board) {
   return board.map(row => row.slice().reverse());
 }
 
+function findSpawnKeys(before, after) {
+  const keys = [];
+  for (let r = 0; r < before.length; r++) {
+    for (let c = 0; c < before[r].length; c++) {
+      if (before[r][c] === 0 && after[r][c] !== 0) {
+        keys.push(`${r}-${c}`);
+      }
+    }
+  }
+  return keys;
+}
+
 // ------------------ major merge logic ------------------
 function traceLineLeftWithMoves(line) {
   const entries = [];  // all non-null elements and their buffers
@@ -230,12 +242,15 @@ export default function Game2048() {
   const [animPlay, setAnimPlay] = useState(false);
   const [movingFrom, setMovingFrom] = useState(() => new Set());
   const [flashCells, setFlashCells] = useState(() => new Set());
+  const [spawnCells, setSpawnCells] = useState(() => new Set());
 
+  const SPAWN_MS = 140; // the time for spawn animation
   const MOVE_MS = 65;  // the time for move animation
   const FLASH_MS = 140;
 
   // inner functions:
   function handleNewGame() {
+    const b = initBoard();
     setBoard(initBoard());
     setScore(0);
     setOver(false);
@@ -243,6 +258,15 @@ export default function Game2048() {
     setMovingFrom(new Set());
     setFlashCells(new Set());
     setAnimPlay(false);
+
+    const initSpawn = [];
+    for (let r = 0; r < SIZE; r++) {
+      for (let c = 0; c < SIZE; c++) {
+        if (b[r][c] !== 0) initSpawn.push(`${r}-${c}`);
+      }
+    }
+    setSpawnCells(new Set(initSpawn));
+    window.setTimeout(() => setSpawnCells(new Set()), SPAWN_MS);
   }
 
   function handleMove(dir) {
@@ -259,6 +283,12 @@ export default function Game2048() {
 
     window.setTimeout(() => {
       const withTile = addRandomTile(next);
+      const spawn = findSpawnKeys(next, withTile);
+      if (spawn.length) {
+        setSpawnCells(new Set(spawn));
+        window.setTimeout(() => setSpawnCells(new Set()), SPAWN_MS);
+      }
+
       setBoard(withTile);
       setScore(s => s + gainedTotal);
       setAnimTiles([]);
@@ -319,7 +349,13 @@ export default function Game2048() {
               const k = keyOf(r, c);
               const hide = movingFrom.has(k);
               const flash = flashCells.has(k);
-              const cls = tileClass(value) + (hide ? " movingOut2048" : "") + (flash ? " flash2048" : "");
+              const isSpawn = spawnCells.has(k);
+
+              const cls = tileClass(value) + 
+                (hide     ? " movingOut2048"  : "") +
+                (flash    ? " flash2048"      : "") +
+                (isSpawn  ? " spawn2048"      : "");
+
               return (
                 <div key={k} className={cls}>
                   {value === WILDCARD ? "??" : (value || "")}
