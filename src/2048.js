@@ -3,11 +3,11 @@ import { useState, useEffect } from "react";
 const SIZE = 4;
 const WILDCARD = -1;
 
-const CELL_PX = 80; // height and width for .cell2048
+const CELL_PX = 80; // height and width for .cell2048 (css modify needed if changed)
 const GAP_PX = 10;  // gap for .grid2048
-const PAD_PX = 10;  // padding for .grid2048
+const PAD_PX = 10;  // padding for .grid2048 (css modify needed if changed)
 
-// helper functions:
+// ------------------ helper functions ------------------
 function emptyBoard(size) {
   return Array.from({ length: size }, () => Array(size).fill(0));
 }
@@ -28,8 +28,8 @@ function addRandomTile(board) {
 
   const [r, c] = empties[Math.floor(Math.random() * empties.length)];
   const next = board.map(row => row.slice());
-  
-  if(Math.random() < 0.3)  next[r][c] = WILDCARD;  // 30% chance to generate ??
+
+  if (Math.random() < 0.3) next[r][c] = WILDCARD;  // 30% chance to generate ??
   else next[r][c] = Math.random() < 0.9 ? 2 : 4; // then the lefting 10% chance to be 4
 
   return next;
@@ -42,35 +42,18 @@ function initBoard() {
   return b;
 }
 
-// major merge logic:
-function mergeLineLeft(line) {
-  const nums = line.filter(v => v !== 0);
-  const merged = [];
-  let gained = 0;
+function canMerge(a, b) {
+  const aWild = a === WILDCARD;
+  const bWild = b === WILDCARD;
+  return (a === b && !aWild) || (aWild !== bWild);
+}
 
-  for(let i = 0; i < nums.length; i++)  {
-    const a = nums[i];
-    const b = nums[i+1];
-    const aWild = a === WILDCARD;
-    const bWild = b === WILDCARD;
-
-    const canMerge = (i < nums.length - 1) && ((a === b && !aWild) || (aWild !== bWild))
-    if (canMerge) {
-      const num = aWild ? b : a;
-      const val = num * 2;
-      merged.push(val);
-      gained += val;
-      i ++; // skip the next one to avoid duplicated merge
-    }
-    else {
-      merged.push(a);
-    }
-  }
-
-  while (merged.length < line.length) merged.push(0);
-  const moved = merged.some((v, i) => v !== line[i]);
-
-  return {merged, moved, gained};
+function mergedValue(a, b) {
+  const aWild = a === WILDCARD;
+  const bWild = b === WILDCARD;
+  if (aWild && bWild) return 0;
+  const num = aWild ? b : a;
+  return num * 2;
 }
 
 function rotateBoardLeft(board) {
@@ -99,39 +82,102 @@ function flipBoard(board) {
   return board.map(row => row.slice().reverse());
 }
 
-// apply move and merge
-function moveBoard(board, dir) {
-  let working = board.map(row => row.slice());
+// ------------------ major merge logic ------------------
+function traceLineLeftWithMoves(line) {
+  const entries = [];  // all non-null elements and their buffers
+  for (let c = 0; c < line.length; c++) if (line[c] !== 0)
+    entries.push({ v: line[c], fromC: c });
 
-  if (dir === "up") {
-    working = rotateBoardLeft(working);
-  }
-  else if (dir === "down") {
-    working = rotateBoardRight(working);
-  }
-  else if (dir === "right") {
-    working = flipBoard(working);
+  const merged = [];
+  const moves = [];
+  const mergedDestCols = [];
+  let gained = 0;
+  let target = 0;
+
+  for (let i = 0; i < entries.length; i++) {
+    const a = entries[i];
+    const b = entries[i + 1];
+
+    if (b && canMerge(a.v, b.v)) {
+      const val = mergedValue(a.v, b.v);
+      merged.push(val);
+      moves.push({ fromC: a.fromC, toC: target, v: a.v, willMerge: true });
+      moves.push({ fromC: b.fromC, toC: target, v: b.v, willMerge: true });
+      mergedDestCols.push(target);
+      gained += val;
+      target++;
+      i++;
+    }
+    else {
+      merged.push(a.v);
+      moves.push({ fromC: a.fromC, toC: target, v: a.v, willMerge: false });
+      target++;
+    }
   }
 
-  let movedAny = false;
+  while (merged.length < line.length) merged.push(0);
+  const moved = moves.some(m => m.fromC !== m.toC);
+
+  return { merged, moves, mergedDestCols, moved, gained };
+}
+
+function computeMoveWithTrace(board, dir) {
+  const N = board.length;
+
+  let working = board.map(r => r.slice());
+  if (dir === "up") working = rotateBoardLeft(working);
+  else if (dir === "down") working = rotateBoardRight(working);
+  else if (dir === "right") working = flipBoard(working);
+
+  const mergedRows = [];
+  const rowMoves = [];
+  const mergedDestsWorking = [];
   let gainedTotal = 0;
-  const mergedRows = working.map(row => {
-    const { merged, moved, gained } = mergeLineLeft(row);
+  let movedAny = false;
+
+  for (let r = 0; r < N; r++) {
+    const { merged, moves, mergedDestCols, moved, gained } = traceLineLeftWithMoves(working[r]);
+    mergedRows.push(merged);
+    rowMoves.push({ r, moves });
+    mergedDestCols.forEach(c => mergedDestsWorking.push({ r, c }));
     if (moved) movedAny = true;
     gainedTotal += gained;
-    return merged;
-  });
+  }
 
   let next =
-    dir === "up"
-      ? rotateBoardRight(mergedRows)
-      : dir === "down"
-        ? rotateBoardLeft(mergedRows)
-        : dir === "right"
-          ? flipBoard(mergedRows)
-          : mergedRows;
+    dir === "up" ? rotateBoardRight(mergedRows) :
+      dir === "down" ? rotateBoardLeft(mergedRows) :
+        dir === "right" ? flipBoard(mergedRows) :
+          mergedRows;
 
-  return { next, moved: movedAny, gained: gainedTotal };
+  function fromWorkingToOriginal_src(rw, cw) {
+    if (dir === "left") return { r: rw, c: cw };
+    if (dir === "up") return { r: cw, c: N - 1 - rw };
+    if (dir === "down") return { r: N - 1 - cw, c: rw };
+
+    return { r: rw, c: N - 1 - cw };
+  }
+  function fromWorkingToOriginal_dst(rw, cw) {
+
+    if (dir === "left") return { r: rw, c: cw };
+    if (dir === "up") return { r: cw, c: N - 1 - rw };
+    if (dir === "down") return { r: N - 1 - cw, c: rw };
+
+    return { r: rw, c: N - 1 - cw };
+  }
+
+  const moves = [];
+  rowMoves.forEach(({ r: rw, moves: ms }) => {
+    ms.forEach(m => {
+      const src = fromWorkingToOriginal_src(rw, m.fromC);
+      const dst = fromWorkingToOriginal_dst(rw, m.toC);
+      moves.push({ fromR: src.r, fromC: src.c, toR: dst.r, toC: dst.c, v: m.v, willMerge: m.willMerge });
+    });
+  });
+
+  const mergedDest = mergedDestsWorking.map(({ r: rw, c: cw }) => fromWorkingToOriginal_dst(rw, cw));
+
+  return { next, movedAny, gainedTotal, moves, mergedDest };
 }
 
 function isGameOver(board) {
@@ -160,36 +206,68 @@ function isGameOver(board) {
   return true;
 }
 
+// ------------------ style & render ------------------
 function tileClass(v) {
   return v === WILDCARD ? "cell2048 wild2048" : `cell2048 v${v || 0}`;
 }
 
+function keyOf(r, c) { return `${r}-${c}`; }
+
+function cellXY(r, c) {
+  const x = c * (CELL_PX + GAP_PX);
+  const y = r * (CELL_PX + GAP_PX);
+  return { x, y };
+}
+
+// ------------------ result to return ------------------
 export default function Game2048() {
   // inner const:
   const [board, setBoard] = useState(() => initBoard());
   const [score, setScore] = useState(0);
   const [over, setOver] = useState(false);
 
+  const [animTiles, setAnimTiles] = useState([]);
+  const [animPlay, setAnimPlay] = useState(false);
+  const [movingFrom, setMovingFrom] = useState(() => new Set());
+  const [flashCells, setFlashCells] = useState(() => new Set());
+
+  const MOVE_MS = 65;  // the time for move animation
+  const FLASH_MS = 140;
+
   // inner functions:
   function handleNewGame() {
     setBoard(initBoard());
     setScore(0);
     setOver(false);
+    setAnimTiles([]);
+    setMovingFrom(new Set());
+    setFlashCells(new Set());
+    setAnimPlay(false);
   }
 
   function handleMove(dir) {
     if (over) return;
-    setBoard(prev => {
-      const { next, moved, gained } = moveBoard(prev, dir);
-      if (!moved) return prev;
 
-      setScore(s => s + gained);
+    const { next, movedAny, gainedTotal, moves, mergedDest } = computeMoveWithTrace(board, dir);
+    if (!movedAny) return;
+
+    setAnimTiles(moves);
+    setMovingFrom(new Set(moves.map(m => keyOf(m.fromR, m.fromC))));
+    setAnimPlay(false);
+
+    requestAnimationFrame(() => requestAnimationFrame(() => setAnimPlay(true)));
+
+    window.setTimeout(() => {
       const withTile = addRandomTile(next);
-
+      setBoard(withTile);
+      setScore(s => s + gainedTotal);
+      setAnimTiles([]);
+      setMovingFrom(new Set());
+      setFlashCells(new Set(mergedDest.map(p => keyOf(p.r, p.c))));
       if (isGameOver(withTile)) setOver(true);
 
-      return withTile;
-    });
+      window.setTimeout(() => setFlashCells(new Set()), FLASH_MS);
+    }, MOVE_MS);
   }
 
   useEffect(() => {
@@ -212,10 +290,10 @@ export default function Game2048() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [over]);
+  }, [board, over]);
 
   return (
-   <div className="container2048">
+    <div className="container2048">
 
       <div className="instruction2048">
         <p>Control Keys:</p>
@@ -232,16 +310,48 @@ export default function Game2048() {
         </div>
       </div>
 
-      {over && (<p className = "GameOver2048"> Game Over </p>)}
+      {over && (<p className="GameOver2048"> Game Over </p>)}
 
-      <div className="grid2048" style={{ "--cols": SIZE }}>
-        {board.map((row, r) =>
-          row.map((value, c) => (
-            <div key={`${r}-${c}`} className={tileClass(value)}>
-              {value === WILDCARD ? "??" : value || ""}
-            </div>
-          ))
-        )}
+      <div className="boardWrap2048">
+        <div className="grid2048" style={{ "--cols": SIZE }}>
+          {board.map((row, r) =>
+            row.map((value, c) => {
+              const k = keyOf(r, c);
+              const hide = movingFrom.has(k);
+              const flash = flashCells.has(k);
+              const cls = tileClass(value) + (hide ? " movingOut2048" : "") + (flash ? " flash2048" : "");
+              return (
+                <div key={k} className={cls}>
+                  {value === WILDCARD ? "??" : (value || "")}
+                </div>
+              );
+            })
+          )}
+        </div>
+        {/* render the moving nums */}
+        <div className="animLayer2048">
+          {animTiles.map((m, idx) => {
+            const from = cellXY(m.fromR, m.fromC);
+            const to = cellXY(m.toR, m.toC);
+            const dx = to.x - from.x;
+            const dy = to.y - from.y;
+
+            const style = {
+              left: from.x,
+              top: from.y,
+              transform: `translate3d(${animPlay ? dx : 0}px, ${animPlay ? dy : 0}px, 0)`,
+              transitionDuration: `${MOVE_MS}ms`,
+            };
+
+            return (
+              <div key={idx} className="movingTile2048">
+                <div className={`movingInner2048 ${tileClass(m.v)}`} style={style}>
+                  {m.v === WILDCARD ? "??" : m.v}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       <div className="controls2048" role="group" aria-label="Move controls">
