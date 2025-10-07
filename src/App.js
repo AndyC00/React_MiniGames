@@ -4,7 +4,7 @@ const gameRegistry = {
   ticTacToe: { label: "TicTacToe", loader: () => import("./TicTacToe") },
   gomoku:    { label: "Gomoku", loader: () => import("./Gomoku") },
   diceRoller: { label: "Table Game Dice", loader: () => import("./Dice") },
-  game2048: { label: "2048", loader: () => import("./2048") }
+  game2048: { label: "2048 Plus", loader: () => import("./2048") }
 };
 
 export default function App() {

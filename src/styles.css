@@ -371,4 +371,4 @@ body {
 .cell2048.v512  { background:#edc850; color:#f9f6f2; }
 .cell2048.v1024 { background:#edc53f; color:#f9f6f2; }
 .cell2048.v2048 { background:#edc22e; color:#f9f6f2; }
-
+.cell2048.wild2048 { background:#6c5ce7; color:#f9f6f2; }

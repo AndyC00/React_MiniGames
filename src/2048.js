@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 const SIZE = 4;
+const WILDCARD = -1;
 
 // helper functions:
 function emptyBoard(size) {
@@ -23,7 +24,10 @@ function addRandomTile(board) {
 
   const [r, c] = empties[Math.floor(Math.random() * empties.length)];
   const next = board.map(row => row.slice());
-  next[r][c] = Math.random() < 0.9 ? 2 : 4; // 10% chance to be 4
+  
+  if(Math.random() < 0.2)  next[r][c] = WILDCARD;  // 20% chance to generate ??
+  else next[r][c] = Math.random() < 0.9 ? 2 : 4; // then the lefting 10% chance to be 4
+
   return next;
 }
 
@@ -39,23 +43,37 @@ function mergeLineLeft(line) {
   const nums = line.filter(v => v !== 0);
   const merged = [];
   let gained = 0;
-  for (let i = 0; i < nums.length; i++) {
-    if (i < nums.length - 1 && nums[i] === nums[i + 1]) {
-      const val = nums[i] * 2;
+
+  for(let i = 0; i < nums.length; i++)  {
+    const a = nums[i];
+    const b = nums[i+1];
+    const aWild = a === WILDCARD;
+    const bWild = b === WILDCARD;
+
+    if (i < (nums.length - 1) && (a === b || aWild || bWild))  {
+      let val;
+      if (aWild && bWild) {
+        val = 4;
+      }
+      else if (aWild) {
+        val = b * 2;
+      }
+      else {
+        val = a * 2;
+      }
       merged.push(val);
       gained += val;
-      i++;
+      i++;  //skip the next num to avoid duplicate merge
     }
     else {
-      merged.push(nums[i]);
+      merged.push(a);
     }
   }
-  while (merged.length < line.length) {
-    merged.push(0);
-  }
+
+  while (merged.length < line.length) merged.push(0);
   const moved = merged.some((v, i) => v !== line[i]);
 
-  return { merged, moved, gained };
+  return {merged, moved, gained};
 }
 
 function rotateBoardLeft(board) {
@@ -119,8 +137,21 @@ function moveBoard(board, dir) {
   return { next, moved: movedAny, gained: gainedTotal };
 }
 
+function hasWildCard(board) {
+  for (let r = 0; r < board.length; r++)
+  {
+    for(let c = 0; c < board[r].length; c++)
+    {
+      if (board[r][c] === WILDCARD)
+        return true;
+    }
+  }
+  return false;
+}
+
 function isGameOver(board) {
   if (getEmptyCells(board).length > 0) return false;
+  if (hasWildCard(board)) return false;
 
   const N = board.length;
 
@@ -138,7 +169,7 @@ function isGameOver(board) {
 }
 
 function tileClass(v) {
-  return `cell2048 v${v || 0}`;
+  return v === WILDCARD ? "cell2048 wild2048" : `cell2048 v${v || 0}`;
 }
 
 export default function Game2048() {
@@ -197,7 +228,8 @@ export default function Game2048() {
       <div className="instruction2048">
         <p>Control Keys:</p>
         <p>Buttons below or "AWSD" on your keyboard</p>
-        <p>Note: ?? can merge with all numbers</p>
+        <p>Note:</p>
+        <p>?? can merge with any numbers but itself</p>
       </div>
 
       <div className="header2048">
@@ -212,7 +244,7 @@ export default function Game2048() {
         {board.map((row, r) =>
           row.map((value, c) => (
             <div key={`${r}-${c}`} className={tileClass(value)}>
-              {value || ""}
+              {value === WILDCARD ? "??" : value || ""}
             </div>
           ))
         )}
@@ -232,9 +264,7 @@ export default function Game2048() {
         <div />
       </div>
 
-      {over && (
-        <p className = "GameOver2048"> Game Over </p>
-      )}
+      {over && (<p className = "GameOver2048"> Game Over </p>)}
 
     </div>
   );
