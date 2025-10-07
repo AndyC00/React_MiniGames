@@ -391,7 +391,7 @@ export default function Game2048() {
         <button 
           className="btn2048 undoButton2048"
           onClick={handleUndo}
-          disabled={!canUndo || isAnimating}>
+          disabled={!canUndo}>
             Undo
         </button>
       </div>
