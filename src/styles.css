@@ -354,8 +354,9 @@ body {
 }
 
 .GameOver2048 {
-  color: saddlebrown;
-  font-size: large;
+  color: rgb(158, 0, 0);
+  font-size: 45px;
+  font-weight: 900;
 }
 
 /* 2048 tile styles */
@@ -371,4 +372,6 @@ body {
 .cell2048.v512  { background:#edc850; color:#f9f6f2; }
 .cell2048.v1024 { background:#edc53f; color:#f9f6f2; }
 .cell2048.v2048 { background:#edc22e; color:#f9f6f2; }
-.cell2048.wild2048 { background:#6c5ce7; color:#f9f6f2; }
+.cell2048.v4096 { background:#3c3a32; color:#f9f6f2; }
+.cell2048.v8192 { background:#8b6de6; color:#f9f6f2; }
+.cell2048.wild2048 { background:#887af1; color:#f9f6f2; }

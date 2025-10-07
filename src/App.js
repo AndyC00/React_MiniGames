@@ -1,10 +1,10 @@
 import { useMemo, useState, Suspense, lazy } from "react";
 
 const gameRegistry = {
-  ticTacToe: { label: "TicTacToe", loader: () => import("./TicTacToe") },
+  game2048: { label: "2048 Plus", loader: () => import("./2048") },
   gomoku:    { label: "Gomoku", loader: () => import("./Gomoku") },
   diceRoller: { label: "Table Game Dice", loader: () => import("./Dice") },
-  game2048: { label: "2048 Plus", loader: () => import("./2048") }
+  ticTacToe: { label: "TicTacToe", loader: () => import("./TicTacToe") },
 };
 
 export default function App() {

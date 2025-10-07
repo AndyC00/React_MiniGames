@@ -3,6 +3,10 @@ import { useState, useEffect } from "react";
 const SIZE = 4;
 const WILDCARD = -1;
 
+const CELL_PX = 80; // height and width for .cell2048
+const GAP_PX = 10;  // gap for .grid2048
+const PAD_PX = 10;  // padding for .grid2048
+
 // helper functions:
 function emptyBoard(size) {
   return Array.from({ length: size }, () => Array(size).fill(0));
@@ -25,7 +29,7 @@ function addRandomTile(board) {
   const [r, c] = empties[Math.floor(Math.random() * empties.length)];
   const next = board.map(row => row.slice());
   
-  if(Math.random() < 0.2)  next[r][c] = WILDCARD;  // 20% chance to generate ??
+  if(Math.random() < 0.3)  next[r][c] = WILDCARD;  // 30% chance to generate ??
   else next[r][c] = Math.random() < 0.9 ? 2 : 4; // then the lefting 10% chance to be 4
 
   return next;
@@ -50,20 +54,13 @@ function mergeLineLeft(line) {
     const aWild = a === WILDCARD;
     const bWild = b === WILDCARD;
 
-    if (i < (nums.length - 1) && (a === b || aWild || bWild))  {
-      let val;
-      if (aWild && bWild) {
-        val = 4;
-      }
-      else if (aWild) {
-        val = b * 2;
-      }
-      else {
-        val = a * 2;
-      }
+    const canMerge = (i < nums.length - 1) && ((a === b && !aWild) || (aWild !== bWild))
+    if (canMerge) {
+      const num = aWild ? b : a;
+      const val = num * 2;
       merged.push(val);
       gained += val;
-      i++;  //skip the next num to avoid duplicate merge
+      i ++; // skip the next one to avoid duplicated merge
     }
     else {
       merged.push(a);
@@ -137,21 +134,8 @@ function moveBoard(board, dir) {
   return { next, moved: movedAny, gained: gainedTotal };
 }
 
-function hasWildCard(board) {
-  for (let r = 0; r < board.length; r++)
-  {
-    for(let c = 0; c < board[r].length; c++)
-    {
-      if (board[r][c] === WILDCARD)
-        return true;
-    }
-  }
-  return false;
-}
-
 function isGameOver(board) {
   if (getEmptyCells(board).length > 0) return false;
-  if (hasWildCard(board)) return false;
 
   const N = board.length;
 
@@ -159,8 +143,16 @@ function isGameOver(board) {
     for (let c = 0; c < N; c++) {
       const v = board[r][c];
 
-      if ((r + 1 < N && board[r + 1][c] === v) || (c + 1 < N && board[r][c + 1] === v)) {
-        return false;
+      if (c + 1 < N) {
+        const w = board[r][c + 1];
+        const canMergeRight = (v === w && v !== WILDCARD) || ((v === WILDCARD) !== (w === WILDCARD));
+        if (canMergeRight) return false;
+      }
+
+      if (r + 1 < N) {
+        const w = board[r + 1][c];
+        const canMergeDown = (v === w && v !== WILDCARD) || ((v === WILDCARD) !== (w === WILDCARD));
+        if (canMergeDown) return false;
       }
     }
   }
@@ -240,6 +232,8 @@ export default function Game2048() {
         </div>
       </div>
 
+      {over && (<p className = "GameOver2048"> Game Over </p>)}
+
       <div className="grid2048" style={{ "--cols": SIZE }}>
         {board.map((row, r) =>
           row.map((value, c) => (
@@ -263,8 +257,6 @@ export default function Game2048() {
         <button className="btn2048 arrowBtn2048" onClick={() => handleMove("down")} aria-label="Down">🔽</button>
         <div />
       </div>
-
-      {over && (<p className = "GameOver2048"> Game Over </p>)}
 
     </div>
   );
