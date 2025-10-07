@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/React_MiniGames/static/css/main.5da1ffd9.css",
-    "main.js": "/React_MiniGames/static/js/main.b472c166.js",
-    "static/js/212.3be0bf25.chunk.js": "/React_MiniGames/static/js/212.3be0bf25.chunk.js",
+    "main.css": "/React_MiniGames/static/css/main.c1cc500e.css",
+    "main.js": "/React_MiniGames/static/js/main.79905d59.js",
+    "static/js/212.97e003fd.chunk.js": "/React_MiniGames/static/js/212.97e003fd.chunk.js",
     "static/js/476.549e9e2e.chunk.js": "/React_MiniGames/static/js/476.549e9e2e.chunk.js",
     "static/js/251.b11ef613.chunk.js": "/React_MiniGames/static/js/251.b11ef613.chunk.js",
     "static/js/504.487b164c.chunk.js": "/React_MiniGames/static/js/504.487b164c.chunk.js",
     "index.html": "/React_MiniGames/index.html",
-    "main.5da1ffd9.css.map": "/React_MiniGames/static/css/main.5da1ffd9.css.map",
-    "main.b472c166.js.map": "/React_MiniGames/static/js/main.b472c166.js.map",
-    "212.3be0bf25.chunk.js.map": "/React_MiniGames/static/js/212.3be0bf25.chunk.js.map",
+    "main.c1cc500e.css.map": "/React_MiniGames/static/css/main.c1cc500e.css.map",
+    "main.79905d59.js.map": "/React_MiniGames/static/js/main.79905d59.js.map",
+    "212.97e003fd.chunk.js.map": "/React_MiniGames/static/js/212.97e003fd.chunk.js.map",
     "476.549e9e2e.chunk.js.map": "/React_MiniGames/static/js/476.549e9e2e.chunk.js.map",
     "251.b11ef613.chunk.js.map": "/React_MiniGames/static/js/251.b11ef613.chunk.js.map",
     "504.487b164c.chunk.js.map": "/React_MiniGames/static/js/504.487b164c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.5da1ffd9.css",
-    "static/js/main.b472c166.js"
+    "static/css/main.c1cc500e.css",
+    "static/js/main.79905d59.js"
   ]
 }
