@@ -46,7 +46,13 @@ body {
   margin-left: 8px;
   color: #4cc0d2;
   border: none;
+  font-weight: 550;
 }
+
+.app select option[value="game2048"]    { color: #4e81f1; font-weight: 550; }
+.app select option[value="diceRoller"]  { color: #16a34a; font-weight: 550; }
+.app select option[value="gomoku"]      { font-weight: 550; }
+.app select option[value="ticTacToe"]   { font-weight: 550; }
 
 /* -------------------------- Tic Tac Toe styles -------------------------- */
 .ticGame {

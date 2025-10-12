@@ -1,10 +1,10 @@
 import { useMemo, useState, Suspense, lazy } from "react";
 
 const gameRegistry = {
-  game2048: { label: "2048 Plus", loader: () => import("./2048") },
-  gomoku:    { label: "Gomoku", loader: () => import("./Gomoku") },
+  game2048:   { label: "2048 Plus",       loader: () => import("./2048") },
   diceRoller: { label: "Table Game Dice", loader: () => import("./Dice") },
-  ticTacToe: { label: "TicTacToe", loader: () => import("./TicTacToe") },
+  gomoku:     { label: "Gomoku",          loader: () => import("./Gomoku") },
+  ticTacToe:  { label: "TicTacToe",       loader: () => import("./TicTacToe") },
 };
 
 export default function App() {
@@ -21,7 +21,12 @@ export default function App() {
         <select value={selectedGame} onChange={(e) => setSelectedGame(e.target.value)}>
           <option value=""> Selecting Page </option>
           {Object.entries(gameRegistry).map(([key, game]) => (
-            <option key={key} value={key}>{game.label}</option>
+            <option
+              key={key}
+              value={key}
+            >
+              {game.label}
+            </option>
           ))}
         </select>
       </label>
