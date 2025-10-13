@@ -551,3 +551,23 @@ body {
   animation: spawn2048-kf 140ms ease-out;
   /* must align with SPAWN_MS */
 }
+
+/* 2048 score effects */
+@property --h {
+  syntax: '<number>';
+  initial-value: 0;
+  inherits: false;
+}
+
+@keyframes hueSpin2048 {
+  to { --h: 360; }
+}
+
+.animateHue2048 {
+  color: hsl(var(--h) 85% 55%);
+  animation: hueSpin2048 var(--hueDur, 2.4s) linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) { /* not applied if user prefers reduced motion */
+  .animateHue2048 { animation: none; }
+}

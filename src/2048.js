@@ -233,6 +233,22 @@ function cellXY(r, c) {
   return { x, y };
 }
 
+function scoreToHueDuration(score) {
+  const threshold = 10000;
+  if (score < threshold) return null;
+
+  const extra = score - threshold;
+
+  const base = 4.5;     // anim speed, seconds for one round
+  const decay = 0.85;
+  const step = 2000;
+  const min  = 0.7;     // the top limit of anim speed
+
+  const dur = base * Math.pow(decay, Math.floor(extra / step));
+  return Math.max(min, dur);
+}
+
+
 // ------------------ result to return ------------------
 export default function Game2048() {
   // inner const:
@@ -395,8 +411,19 @@ export default function Game2048() {
       <div className="header2048">
         <h2 className="title2048">2048</h2>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <span className="score2048">Score: {score}</span>
-          <span className="best2048">Best: {best}</span>
+          {(() => {
+            const dur = scoreToHueDuration(score);
+            const cls = "score2048" + (dur ? " animateHue2048" : "");
+            const style = dur ? { "--hueDur": `${dur}s` } : undefined;
+            return <span className={cls} style={style}>Score: {score}</span>;
+          })()}
+
+          {(() => {
+            const dur = scoreToHueDuration(best);
+            const cls = "best2048" + (dur ? " animateHue2048" : "");
+            const style = dur ? { "--hueDur": `${dur}s` } : undefined;
+            return <span className={cls} style={style}>Best: {best}</span>;
+          })()}
           <button className="btn2048" onClick={handleNewGame}>New Game</button>
         </div>
       </div>
