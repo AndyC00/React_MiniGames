@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 const SIZE = 4;
 const WILDCARD = -1;
 
+const STORAGE_KEY = `react2048`; // for local storage
+
 const CELL_PX = 80; // height and width for .cell2048 (css modify needed if changed)
 const GAP_PX = 10;  // gap for .grid2048
 const PAD_PX = 10;  // padding for .grid2048 (css modify needed if changed)
@@ -239,8 +241,8 @@ export default function Game2048() {
   const [over, setOver] = useState(false);
   const [prevBoard, setPrevBoard] = useState(null);
   const [prevScore, setPrevScore] = useState(0);
-  const [prevOver,  setPrevOver]  = useState(false);
-  const [canUndo,   setCanUndo]   = useState(false);
+  const [prevOver, setPrevOver] = useState(false);
+  const [canUndo, setCanUndo] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const [animTiles, setAnimTiles] = useState([]);
@@ -248,6 +250,12 @@ export default function Game2048() {
   const [movingFrom, setMovingFrom] = useState(() => new Set());
   const [flashCells, setFlashCells] = useState(() => new Set());
   const [spawnCells, setSpawnCells] = useState(() => new Set());
+
+  const [best, setBest] = useState(() => {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const n = raw == null ? 0 : Number(raw);
+    return Number.isFinite(n) ? n : 0;
+  });
 
   const SPAWN_MS = 140; // the time for spawn animation
   const MOVE_MS = 65;  // the time for move animation
@@ -346,6 +354,13 @@ export default function Game2048() {
   }
 
   useEffect(() => {
+    if (score > best) {
+      setBest(score);
+      localStorage.setItem(STORAGE_KEY, String(score));
+    }
+  }, [score, best]);
+
+  useEffect(() => {
     const onKey = (e) => {
       const key = e.key.toLowerCase();
       const map = {
@@ -381,6 +396,7 @@ export default function Game2048() {
         <h2 className="title2048">2048</h2>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <span className="score2048">Score: {score}</span>
+          <span className="best2048">Best: {best}</span>
           <button className="btn2048" onClick={handleNewGame}>New Game</button>
         </div>
       </div>
@@ -388,11 +404,11 @@ export default function Game2048() {
       {over && (<p className="GameOver2048"> Game Over </p>)}
 
       <div className="undoButton2048wapper">
-        <button 
+        <button
           className="btn2048 undoButton2048"
           onClick={handleUndo}
           disabled={!canUndo}>
-            Undo
+          Undo
         </button>
       </div>
 
@@ -405,10 +421,10 @@ export default function Game2048() {
               const flash = flashCells.has(k);
               const isSpawn = spawnCells.has(k);
 
-              const cls = tileClass(value) + 
-                (hide     ? " movingOut2048"  : "") +
-                (flash    ? " flash2048"      : "") +
-                (isSpawn  ? " spawn2048"      : "");
+              const cls = tileClass(value) +
+                (hide ? " movingOut2048" : "") +
+                (flash ? " flash2048" : "") +
+                (isSpawn ? " spawn2048" : "");
 
               return (
                 <div key={k} className={cls}>
