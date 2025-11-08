@@ -222,7 +222,26 @@ function isGameOver(board) {
 
 // ------------------ style & render ------------------
 function tileClass(v) {
-  return v === WILDCARD ? "cell2048 wild2048" : `cell2048 v${v || 0}`;
+  if (v === WILDCARD) return "cell2048 wild2048";
+  if (!v) return "cell2048 v0";
+
+  // Cycle colors after 8192 by mapping to existing palette classes
+  // Palette covers 2..8192 => 13 steps (log2-1 from 0..12)
+  const steps = 13;
+  const pow = Math.log2(v);
+  const idx = ((pow - 1) % steps + steps) % steps; // safe modulo
+  const normVal = 2 ** (idx + 1);
+  return `cell2048 v${normVal}`;
+}
+
+function formatTileValue(v) {
+  if (v === WILDCARD) return "??";
+  if (!v) return "";
+  if (v > 8192) {
+    const s = String(v);
+    if (s.length > 2) return `${s[0]}...${s[s.length - 1]}`;
+  }
+  return String(v);
 }
 
 function keyOf(r, c) { return `${r}-${c}`; }
@@ -455,7 +474,7 @@ export default function Game2048() {
 
               return (
                 <div key={k} className={cls}>
-                  {value === WILDCARD ? "??" : (value || "")}
+                  {formatTileValue(value)}
                 </div>
               );
             })
@@ -479,7 +498,7 @@ export default function Game2048() {
             return (
               <div key={idx} className="movingTile2048">
                 <div className={`movingInner2048 ${tileClass(m.v)}`} style={style}>
-                  {m.v === WILDCARD ? "??" : m.v}
+                  {formatTileValue(m.v)}
                 </div>
               </div>
             );
