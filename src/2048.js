@@ -225,12 +225,11 @@ function tileClass(v) {
   if (v === WILDCARD) return "cell2048 wild2048";
   if (!v) return "cell2048 v0";
 
-  // Cycle colors after 8192 by mapping to existing palette classes
-  // Palette covers 2..8192 => 13 steps (log2-1 from 0..12)
-  const steps = 13;
-  const pow = Math.log2(v);
-  const idx = ((pow - 1) % steps + steps) % steps; // safe modulo
-  const normVal = 2 ** (idx + 1);
+  // Cycle colors after 8192 using a fixed palette and integer exponent.
+  const palette = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192];
+  let exp = Math.round(Math.log2(Math.abs(v))); // robust to float noise
+  if (!Number.isFinite(exp) || exp < 1) exp = 1;
+  const normVal = palette[(exp - 1) % palette.length];
   return `cell2048 v${normVal}`;
 }
 
