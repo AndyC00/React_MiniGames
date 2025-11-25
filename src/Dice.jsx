@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 
 // constants:
-const DICE_RE = /(?<!\d)(\d*)\s*[dD]\s*(\d+)(?!\d)/g;
+const DICE_RE = /(?<!\d)(\d+)\s*[dD]\s*(\d+)(?!\d)/g;
 const QUICK_BUTTONS = [
   { id: 'q1', text: 'You rolled a dice with 4 sides: 1d4', bg: `${process.env.PUBLIC_URL}/image/4sides.png` },
   { id: 'q2', text: 'You rolled a dice with 6 sides: 1d6', bg: `${process.env.PUBLIC_URL}/image/6sides.png` },
