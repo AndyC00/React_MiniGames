@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 
+
 // const parameters
 const EMPTY = 0, BLACK = 1, WHITE = 2;
 const PIECE_CHAR = { [EMPTY]: "", [BLACK]: "🐮", [WHITE]: "🐷" };
