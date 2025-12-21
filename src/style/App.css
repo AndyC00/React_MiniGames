@@ -1,6 +1,6 @@
 .app {
   padding: 16px;
-  max-width: 960px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -20,13 +20,14 @@
 .gameGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 28px;
 }
 
 /* PC: two columns two rows */
 @media (min-width: 768px) {
   .gameGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(320px, 1fr));
+    gap: 32px;
   }
 }
 
@@ -34,6 +35,7 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  padding-bottom: 30px;
 }
 
 .gameTile {
@@ -61,7 +63,7 @@
 }
 
 .tileLabel {
-  margin-top: 8px;
+  margin-top: 21px;
   text-align: center;
   font-weight: 600;
 }
