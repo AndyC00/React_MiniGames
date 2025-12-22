@@ -419,107 +419,111 @@ export default function Game2048() {
 
   return (
     <div className="container2048">
-
-      <div className="instruction2048">
-        <p>Control Keys:</p>
-        <p>Buttons below or "AWSD" on your keyboard</p>
-        <p>Note:</p>
-        <p>?? can merge with any numbers but itself</p>
-      </div>
-
-      <div className="header2048">
-        <h2 className="title2048">2048</h2>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          {(() => {
-            const dur = scoreToHueDuration(score);
-            const cls = "score2048" + (dur ? " animateHue2048" : "");
-            const style = dur ? { "--hueDur": `${dur}s` } : undefined;
-            return <span className={cls} style={style}>Score: {score}</span>;
-          })()}
-
-          {(() => {
-            const dur = scoreToHueDuration(best);
-            const cls = "best2048" + (dur ? " animateHue2048" : "");
-            const style = dur ? { "--hueDur": `${dur}s` } : undefined;
-            return <span className={cls} style={style}>Best: {best}</span>;
-          })()}
-          <button className="btn2048" onClick={handleNewGame}>New Game</button>
-        </div>
-      </div>
-
-      {over && (<p className="GameOver2048"> Game Over </p>)}
-
-      <div className="undoButton2048wapper">
-        <button
-          className="btn2048 undoButton2048"
-          onClick={handleUndo}
-          disabled={!canUndo}>
-          Undo
-        </button>
-      </div>
-
-      <div className="boardWrap2048">
-        <div className="grid2048" style={{ "--cols": SIZE }}>
-          {board.map((row, r) =>
-            row.map((value, c) => {
-              const k = keyOf(r, c);
-              const hide = movingFrom.has(k);
-              const flash = flashCells.has(k);
-              const isSpawn = spawnCells.has(k);
-
-              const cls = tileClass(value) +
-                (hide ? " movingOut2048" : "") +
-                (flash ? " flash2048" : "") +
-                (isSpawn ? " spawn2048" : "");
-
+      <div className="panel2048">
+        <div className="header2048">
+          <div className="titleBlock2048">
+            <h2 className="title2048">2048</h2>
+            <p className="subtitle2048">A innovative 2048 game with some enhancement!</p>
+          </div>
+          <div className="scoreWrap2048">
+            {(() => {
+              const dur = scoreToHueDuration(score);
+              const cls = "score2048" + (dur ? " animateHue2048" : "");
+              const style = dur ? { "--hueDur": `${dur}s` } : undefined;
               return (
-                <div key={k} className={cls}>
-                  {formatTileValue(value)}
+                <div className="scoreCard2048">
+                  <span className="scoreLabel2048">Score</span>
+                  <span className={cls} style={style}>{score}</span>
                 </div>
               );
-            })
-          )}
-        </div>
-        {/* render the moving nums */}
-        <div className="animLayer2048">
-          {animTiles.map((m, idx) => {
-            const from = cellXY(m.fromR, m.fromC);
-            const to = cellXY(m.toR, m.toC);
-            const dx = to.x - from.x;
-            const dy = to.y - from.y;
+            })()}
 
-            const style = {
-              left: from.x,
-              top: from.y,
-              transform: `translate3d(${animPlay ? dx : 0}px, ${animPlay ? dy : 0}px, 0)`,
-              transitionDuration: `${MOVE_MS}ms`,
-            };
-
-            return (
-              <div key={idx} className="movingTile2048">
-                <div className={`movingInner2048 ${tileClass(m.v)}`} style={style}>
-                  {formatTileValue(m.v)}
+            {(() => {
+              const dur = scoreToHueDuration(best);
+              const cls = "best2048" + (dur ? " animateHue2048" : "");
+              const style = dur ? { "--hueDur": `${dur}s` } : undefined;
+              return (
+                <div className="scoreCard2048">
+                  <span className="scoreLabel2048">Best</span>
+                  <span className={cls} style={style}>{best}</span>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })()}
+            <button className="btn2048" onClick={handleNewGame}>New Game</button>
+          </div>
+        </div>
+
+        <div className="instruction2048">
+          <span>Buttons below or "WASD" on your keyboard</span>
+          <span>?? block merges with any numbers but itself</span>
+        </div>
+
+        {over && (<p className="GameOver2048">Game Over</p>)}
+
+        <div className="undoButton2048wapper">
+          <button
+            className="btn2048 undoButton2048"
+            onClick={handleUndo}
+            disabled={!canUndo}>
+            Undo
+          </button>
+        </div>
+
+        <div className="boardWrap2048">
+          <div className="grid2048" style={{ "--cols": SIZE }}>
+            {board.map((row, r) =>
+              row.map((value, c) => {
+                const k = keyOf(r, c);
+                const hide = movingFrom.has(k);
+                const flash = flashCells.has(k);
+                const isSpawn = spawnCells.has(k);
+
+                const cls = tileClass(value) +
+                  (hide ? " movingOut2048" : "") +
+                  (flash ? " flash2048" : "") +
+                  (isSpawn ? " spawn2048" : "");
+
+                return (
+                  <div key={k} className={cls}>
+                    {formatTileValue(value)}
+                  </div>
+                );
+              })
+            )}
+          </div>
+          {/* render the moving nums */}
+          <div className="animLayer2048">
+            {animTiles.map((m, idx) => {
+              const from = cellXY(m.fromR, m.fromC);
+              const to = cellXY(m.toR, m.toC);
+              const dx = to.x - from.x;
+              const dy = to.y - from.y;
+
+              const style = {
+                left: from.x,
+                top: from.y,
+                transform: `translate3d(${animPlay ? dx : 0}px, ${animPlay ? dy : 0}px, 0)`,
+                transitionDuration: `${MOVE_MS}ms`,
+              };
+
+              return (
+                <div key={idx} className="movingTile2048">
+                  <div className={`movingInner2048 ${tileClass(m.v)}`} style={style}>
+                    {formatTileValue(m.v)}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="controls2048" role="group" aria-label="Move controls">
+          <button className="btn2048 arrowBtn2048 arrowUp2048" onClick={() => handleMove("up")} aria-label="Up">🔼</button>
+          <button className="btn2048 arrowBtn2048 arrowLeft2048" onClick={() => handleMove("left")} aria-label="Left">◀️</button>
+          <button className="btn2048 arrowBtn2048 arrowRight2048" onClick={() => handleMove("right")} aria-label="Right">▶️</button>
+          <button className="btn2048 arrowBtn2048 arrowDown2048" onClick={() => handleMove("down")} aria-label="Down">🔽</button>
         </div>
       </div>
-
-      <div className="controls2048" role="group" aria-label="Move controls">
-        <div />
-        <button className="btn2048 arrowBtn2048" onClick={() => handleMove("up")} aria-label="Up">🔼</button>
-        <div />
-
-        <button className="btn2048 arrowBtn2048" onClick={() => handleMove("left")} aria-label="Left">◀️</button>
-        <div />
-        <button className="btn2048 arrowBtn2048" onClick={() => handleMove("right")} aria-label="Right">▶️</button>
-
-        <div />
-        <button className="btn2048 arrowBtn2048" onClick={() => handleMove("down")} aria-label="Down">🔽</button>
-        <div />
-      </div>
-
     </div>
   );
 }
