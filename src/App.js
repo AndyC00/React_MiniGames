@@ -13,19 +13,19 @@ const gameRegistry = {
   diceRoller: {
     label: "Table Game Dice",
     description: "Roll dice quickly and log for board/table games.",
-    image: `${assetBase}/image/2048.jpeg`,
+    image: `${assetBase}/image/dice.jpeg`,
     loader: () => import("./Dice"),
   },
   gomoku: {
     label: "Gomoku",
     description: "Five in a row on a bigger board.",
-    image: `${assetBase}/image/2048.jpeg`,
+    image: `${assetBase}/image/gomoku.jpeg`,
     loader: () => import("./Gomoku"),
   },
   ticTacToe: {
     label: "TicTacToe",
     description: "Simple classic, quick rounds with steps track.",
-    image: `${assetBase}/image/2048.jpeg`,
+    image: `${assetBase}/image/TicTacToe.jpeg`,
     loader: () => import("./TicTacToe"),
   },
 };
