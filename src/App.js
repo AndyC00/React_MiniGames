@@ -1,4 +1,4 @@
-import { useMemo, useState, Suspense, lazy } from "react";
+import { useMemo, useState, useEffect, Suspense, lazy } from "react";
 import "./style/App.css";
 
 const assetBase = process.env.PUBLIC_URL || "";
@@ -12,7 +12,7 @@ const gameRegistry = {
   },
   diceRoller: {
     label: "Table Game Dice",
-    description: "Roll dice quickly for board/table games.",
+    description: "Roll dice quickly and log for board/table games.",
     image: `${assetBase}/image/2048.jpeg`,
     loader: () => import("./Dice"),
   },
@@ -24,7 +24,7 @@ const gameRegistry = {
   },
   ticTacToe: {
     label: "TicTacToe",
-    description: "Simple classic, quick rounds.",
+    description: "Simple classic, quick rounds with steps track.",
     image: `${assetBase}/image/2048.jpeg`,
     loader: () => import("./TicTacToe"),
   },
@@ -44,6 +44,14 @@ export default function App() {
     if (!meta) return null;
     return lazy(meta.loader);
 
+  }, [selectedGame]);
+
+  useEffect(() => {
+    // close tooltip when come in the game
+    if (selectedGame) {
+      setHoveredKey(null);
+      setTooltip({ x: 0, y: 0, visible: false });
+    }
   }, [selectedGame]);
 
   const hoveredMeta = hoveredKey ? gameRegistry[hoveredKey] : null;

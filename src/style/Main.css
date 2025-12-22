@@ -307,14 +307,18 @@ body {
   margin-top: 30px;
   color: #4e81f1;
   font-weight: bold;
+  text-align: center;
 }
 
 .header2048 {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
   margin-bottom: 10px;
   margin-top: 30px;
+  text-align: center;
 }
 
 .title2048 {
@@ -349,12 +353,17 @@ body {
 
 .undoButton2048 {
   margin-bottom: 10px;
-  margin-left: 310px;
 }
 
 .undoButton2048:disabled {
   opacity: .5;
   cursor: not-allowed;
+}
+
+.undoButton2048wapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .grid2048 {
@@ -393,6 +402,7 @@ body {
   font-size: 60px;
   padding: 0;
   background-color: transparent;
+  margin-left: -1.8vh;
 }
 
 .GameOver2048 {
@@ -480,6 +490,7 @@ body {
 .boardWrap2048 {
   position: relative;
   display: inline-block;
+  margin: 0 auto;
 }
 
 .animLayer2048 {
@@ -566,6 +577,13 @@ body {
 .animateHue2048 {
   color: hsl(var(--h) 85% 55%);
   animation: hueSpin2048 var(--hueDur, 2.4s) linear infinite;
+}
+
+.container2048 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 @media (prefers-reduced-motion: reduce) { /* not applied if user prefers reduced motion */
