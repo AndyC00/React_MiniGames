@@ -69,69 +69,209 @@ body {
 
 /* -------------------------- Tic Tac Toe styles -------------------------- */
 .ticGame {
-  margin-top: 30px;
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+  color: #2f2518;
+}
+
+.ticCard {
+  width: min(100%, 900px);
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0)),
+    linear-gradient(135deg, #f5e0c3, #e3c18c);
+  border: 1px solid rgba(108, 74, 28, 0.22);
+  border-radius: 18px;
+  padding: 22px 22px 20px;
+  box-shadow: 0 18px 42px rgba(44, 27, 8, 0.22);
+}
+
+.ticHeaderRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.ticTitleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
 }
 
 .ticHeader {
-  color: #4cc0d2;
-  margin-bottom: 10px;
+  margin: 0;
+  font-size: 32px;
+  letter-spacing: 0.01em;
+  color: #a3651e;
+}
+
+.ticStatusBadge {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(108, 74, 28, 0.2);
+  border-radius: 12px;
+  padding: 10px 14px;
+  min-width: 180px;
+  text-align: right;
+  font-weight: 700;
+  color: #3d2b18;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    0 12px 20px rgba(44, 27, 8, 0.14);
+}
+
+.ticSurface {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.ticBoardArea {
+  flex: 1 1 460px;
+  display: flex;
+  justify-content: center;
+}
+
+.ticBoardPanel {
+  width: min(100%, 500px);
+  padding: 16px;
+  background:
+    radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0)),
+    linear-gradient(120deg, #e8cda4, #d8b176);
+  border: 1px solid rgba(96, 68, 29, 0.24);
+  border-radius: 16px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 16px 26px rgba(44, 27, 8, 0.18);
+}
+
+.ticGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(90px, 1fr));
+  gap: 10px;
 }
 
 .square {
-  background: #f5f5da;
-  border: 2px solid #dcb35c;
-  float: left;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(160deg, #f8f2e6, #ead9bc);
+  border: 1px solid rgba(108, 74, 28, 0.2);
+  border-radius: 12px;
   font-size: 40px;
-  font-weight: bold;
-  line-height: 60px;
-  height: 60px;
-  margin-right: -1px;
-  margin-top: -1px;
-  padding: 0;
-  text-align: center;
-  width: 60px;
+  font-weight: 800;
+  color: #3b2713;
+  display: grid;
+  place-items: center;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -2px 0 rgba(148, 106, 54, 0.16),
+    0 10px 18px rgba(44, 27, 8, 0.15);
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
 }
 
-.board-row:after {
-  clear: both;
-  content: '';
-  display: table;
-}
-
-.status {
-  margin-bottom: 10px;
-}
-
-.game {
-  display: flex;
-  flex-direction: row;
-}
-
-.game-info {
-  margin-left: 20px;
+.square:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -2px 0 rgba(148, 106, 54, 0.22),
+    0 12px 22px rgba(44, 27, 8, 0.2);
+  background: linear-gradient(150deg, #fff8eb, #ead9bc);
 }
 
 .square.win {
-  background-color: rgba(34, 197, 94, 0.12);
-  box-shadow: 0 0 12px rgba(34, 197, 94, 0.5);
-  z-index: 1;
+  background: linear-gradient(140deg, #f6e2bd, #e9c686);
+  box-shadow:
+    inset 0 0 0 2px rgba(164, 104, 24, 0.55),
+    0 12px 20px rgba(193, 139, 74, 0.35);
 }
 
-.game-info {
-  font-style: oblique;
-  color: #4e81f1;
+.ticHistoryPanel {
+  flex: 0 1 240px;
+  min-width: 220px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(96, 68, 29, 0.2);
+  border-radius: 14px;
+  padding: 14px 14px 12px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    0 14px 24px rgba(44, 27, 8, 0.14);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.game-info button {
-  background: #4cc0d2;
-  border: none;
-  border-radius: 6px;
-  color: white;
+.ticHistoryTitle {
+  margin: 0;
+  font-weight: 800;
+  color: #5b3b1c;
+  letter-spacing: 0.02em;
+}
+
+.ticHistoryList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.ticHistoryList li {
+  margin: 0;
+}
+
+.ticHistoryBtn {
+  width: 100%;
+  text-align: left;
+  background: linear-gradient(130deg, #f5e7d1, #ead2a7);
+  border: 1px solid rgba(108, 74, 28, 0.2);
+  color: #3b2713;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-weight: 700;
   cursor: pointer;
-  font-size: 14px;
-  padding: 4px 10px;
-  transition: background-color 0.2s ease-in-out;
-  margin-top: 10px;
+  box-shadow: 0 8px 14px rgba(41, 28, 11, 0.12);
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+}
+
+.ticHistoryBtn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+  box-shadow: 0 10px 18px rgba(41, 28, 11, 0.16);
+}
+
+.ticHistoryBtn:focus-visible {
+  outline: 2px solid #c18b4a;
+  outline-offset: 2px;
+}
+
+.ticRestartBtn {
+  background: linear-gradient(135deg, #d8b48c, #c18b4a);
+  border-color: rgba(108, 74, 28, 0.3);
+  color: #fffaf3;
+}
+
+@media (max-width: 720px) {
+  .ticStatusBadge {
+    width: 100%;
+    text-align: left;
+  }
+
+  .ticSurface {
+    flex-direction: column;
+  }
+
+  .ticBoardArea {
+    width: 100%;
+  }
+
+  .ticGrid {
+    grid-template-columns: repeat(3, minmax(78px, 1fr));
+  }
 }
 
 /* -------------------------- Gomoku styles -------------------------- */

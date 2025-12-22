@@ -1,79 +1,47 @@
 import { useState } from "react";
 
+const STAR = "⭐️";
+const CROSS = "❌";
 
 function Square({ value, onSquareClick, highlight }) {
+  const label = value
+    ? `Square filled with ${value === STAR ? "star" : "cross"}`
+    : "Empty square";
+
   return (
-    <button className={`square ${highlight ? "win" : ""}`} onClick={onSquareClick}>
+    <button
+      type="button"
+      className={`square ${highlight ? "win" : ""}`}
+      onClick={onSquareClick}
+      aria-label={label}
+    >
       {value}
     </button>
   );
 }
 
-function Board({ xIsNext, squares, onPlay }) {
+function Board({ xIsNext, squares, onPlay, winner, winningLine = [] }) {
   function handleClick(i) {
-    // check if the square is filled
-    if (squares[i]) {
-      return;
-    }
-
-    // check if won
-    if (calculateWinner(squares)) {
+    if (squares[i] || winner) {
       return;
     }
 
     const nextSquares = squares.slice();
-    if (xIsNext) {
-      nextSquares[i] = "❌";
-    }
-    else {
-      nextSquares[i] = "⭐️";
-    }
-
-    // fill the square
+    nextSquares[i] = xIsNext ? STAR : CROSS;
     onPlay(nextSquares);
   }
 
-  const result = calculateWinner(squares);
-  const winner = result?.winner ?? null;
-  const winningLine = result?.line ?? [];
-  const isDraw = !winner && squares.every((sq) => sq !== null);
-
-  let status;
-  if (winner) {
-    if (winner === "❌") {
-      status = "🚀🚀🚀Winner: " + winner + " (the first player)";
-    }
-    else {
-      status = "🚀🚀🚀Winner: " + winner + " (the second player)";
-    }
-  }
-  else if (isDraw) {
-    status = "🤷Draw!";
-  }
-  else {
-    status = "Next player: " + (xIsNext ? "❌" : "⭐️");
-  }
-
   return (
-    <>
-      <div className="status">{status}</div>
-
-      <div className="board-row">
-        <Square value={squares[0]} onSquareClick={() => handleClick(0)} highlight={winningLine.includes(0)} />
-        <Square value={squares[1]} onSquareClick={() => handleClick(1)} highlight={winningLine.includes(1)} />
-        <Square value={squares[2]} onSquareClick={() => handleClick(2)} highlight={winningLine.includes(2)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[3]} onSquareClick={() => handleClick(3)} highlight={winningLine.includes(3)} />
-        <Square value={squares[4]} onSquareClick={() => handleClick(4)} highlight={winningLine.includes(4)} />
-        <Square value={squares[5]} onSquareClick={() => handleClick(5)} highlight={winningLine.includes(5)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[6]} onSquareClick={() => handleClick(6)} highlight={winningLine.includes(6)} />
-        <Square value={squares[7]} onSquareClick={() => handleClick(7)} highlight={winningLine.includes(7)} />
-        <Square value={squares[8]} onSquareClick={() => handleClick(8)} highlight={winningLine.includes(8)} />
-      </div>
-    </>
+    <div className="ticGrid" role="grid" aria-label="Tic Tac Toe board">
+      {squares.map((square, idx) => (
+        <Square
+          key={idx}
+          value={square}
+          onSquareClick={() => handleClick(idx)}
+          highlight={winningLine.includes(idx)}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -86,14 +54,16 @@ function calculateWinner(squares) {
     [1, 4, 7],
     [2, 5, 8],
     [0, 4, 8],
-    [2, 4, 6]
+    [2, 4, 6],
   ];
-  for (let i = 0; i < lines.length; i++) {
+
+  for (let i = 0; i < lines.length; i += 1) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
       return { winner: squares[a], line: [a, b, c] };
     }
   }
+
   return null;
 }
 
@@ -104,6 +74,16 @@ export default function Game() {
   const currentSquares = history[currentMove];
   const xIsNext = currentMove % 2 === 0;
 
+  const result = calculateWinner(currentSquares);
+  const winner = result?.winner ?? null;
+  const winningLine = result?.line ?? [];
+  const isDraw = !winner && currentSquares.every((sq) => sq !== null);
+
+  const status = winner
+    ? `Winner: ${winner} (${winner === STAR ? "first" : "second"} player)`
+    : isDraw
+      ? "Draw!"
+      : `Next player: ${xIsNext ? STAR : CROSS}`;
 
   function handlePlay(nextSquares) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
@@ -115,31 +95,50 @@ export default function Game() {
     setCurrentMove(nextMove);
   }
 
-  const moves = history.map((squares, move) => {
-    let description;
-
-    if (move > 0) {
-      description = 'Go to move #' + move;
-    }
-    else {
-      description = 'Restart';
-    }
+  const moves = history.map((_, move) => {
+    const description = move > 0 ? `Move #${move}` : "Restart";
 
     return (
       <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
+        <button
+          type="button"
+          className={`ticHistoryBtn ${move === 0 ? "ticRestartBtn" : ""}`}
+          onClick={() => jumpTo(move)}
+        >
+          {description}
+        </button>
       </li>
     );
   });
 
   return (
     <div className="ticGame">
-      <h2 className="ticHeader">Tic Tac Toe</h2>
-      <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
-      </div>
-      <div className="game-info">
-        <ol>{moves}</ol>
+      <div className="ticCard">
+        <div className="ticHeaderRow">
+          <div className="ticTitleGroup">
+            <h2 className="ticHeader">Tic Tac Toe</h2>
+          </div>
+          <div className="ticStatusBadge">{status}</div>
+        </div>
+
+        <div className="ticSurface">
+          <div className="ticBoardArea">
+            <div className="ticBoardPanel">
+              <Board
+                xIsNext={xIsNext}
+                squares={currentSquares}
+                onPlay={handlePlay}
+                winner={winner}
+                winningLine={winningLine}
+              />
+            </div>
+          </div>
+
+          <div className="ticHistoryPanel">
+            <div className="ticHistoryTitle">Moves</div>
+            <ol className="ticHistoryList">{moves}</ol>
+          </div>
+        </div>
       </div>
     </div>
   );
