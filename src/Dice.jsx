@@ -60,7 +60,7 @@ export function formatRollResults(results) {
     const rollsStr = r.rolls.join(', ');
     return (
       <div className="dice-line" key={i}>
-        🎲Results :
+        Roll {i + 1}:
         {' '}
         <span className="dice-total">{r.total}</span>
         {'  ('}
@@ -75,7 +75,7 @@ export function formatRollResults(results) {
     const grandTotal = results.reduce((s, r) => s + r.total, 0);
     lines.push(
       <div className="dice-grand" key="grand">
-        Total Sum: <span className="dice-grand-total">{grandTotal}</span>
+        Table total: <span className="dice-grand-total">{grandTotal}</span>
       </div>
     );
   }
@@ -361,58 +361,73 @@ export default function DiceRolling() {
 
   return (
     <div className='dice-container'>
-      <p className="dice-title"><strong>🎲 Table Dice Roller 🎲</strong></p>
-
-      <div className="dice-instruction">
-        <p>Please type "number of dice + 'd' + number of sides on the dice" to roll the dice</p>
-        <p>This app is aimed to log and track your dice numbers and what happens when playing table games</p>
-        <p>Feel free to type some notes, it will keep your notes until you reload this web page</p>
-        <p>Example of use:</p>
-        <p>"I got damaged from a ghoul, received damage 1 d 6"</p>
-        <p>"I observed a murder, my sanity got hurt 1 d 4"</p>
+      <div className="dice-hero">
+        <div className="dice-heading">
+          <h2 className="dice-title">🎲Tabletop Dice Roller</h2>
+          <p className="dice-subtitle">
+            Keep your tabletop moments neat: log, re-roll, and edit notes without losing the flow.
+          </p>
+        </div>
+        <div className="dice-chips">
+          <span className="dice-chip">Story log</span>
+          <span className="dice-chip">Quick presets</span>
+          <span className="dice-chip">Editable rolls</span>
+        </div>
       </div>
 
-      <div className="chat-container">
-        <div className="messages">
-          {messages.map(renderMessage)}
-          {loading && (
-            <div className="message assistant">
-              <div className="loading">
-                <span></span><span></span><span></span>
-              </div>
-            </div>
-          )}
-          {error && <div className="error-message">Error: {error}</div>}
-          <div ref={messagesEndRef} />
+      <div className="dice-board">
+        <div className="dice-instruction">
+          <h3>How to roll</h3>
+          <p>Please type "number of dice + 'd' + number of sides on the dice" to roll the dice.</p>
+          <p>This space keeps your notes until you reload the page, so you can log the scene as you play.</p>
+          <div className="dice-guides">
+            <span>Example: "I got damaged from a ghoul, received damage 1 d 6"</span>
+            <span>Example: "I observed a murder, my sanity got hurt 1 d 4"</span>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="input-form">
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
-            className="input-box"
-            disabled={loading}
-          />
-          <button type="submit" disabled={loading || !input.trim()}>
-            Send
-          </button>
-        </form>
+        <div className="chat-container">
+          <div className="messages">
+            {messages.map(renderMessage)}
+            {loading && (
+              <div className="message assistant">
+                <div className="loading">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+            )}
+            {error && <div className="error-message">Error: {error}</div>}
+            <div ref={messagesEndRef} />
+          </div>
+
+          <form onSubmit={handleSubmit} className="input-form">
+            <input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              className="input-box"
+              disabled={loading}
+            />
+            <button type="submit" disabled={loading || !input.trim()}>
+              Send
+            </button>
+          </form>
+        </div>
+
+        <button
+          type="button"
+          className="reset-btn"
+          onClick={handleReset}
+          aria-label="Reset all messages"
+          title="Reset log"
+        >
+          Reset log
+        </button>
       </div>
 
-      <button
-        type="button"
-        className="reset-btn"
-        onClick={handleReset}
-        aria-label="Reset all messages"
-        title="Reset"
-      >
-        Reset
-      </button>
-
-      <div className="quickbar">
+      <div className="quickbar" aria-label="Quick dice presets">
         {QUICK_BUTTONS.map(btn => (
           <button
             key={btn.id}
@@ -430,3 +445,5 @@ export default function DiceRolling() {
     </div>
   );
 }
+
+
