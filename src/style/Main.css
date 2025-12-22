@@ -136,69 +136,227 @@ body {
 
 /* -------------------------- Gomoku styles -------------------------- */
 .gomoku {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
   margin-top: 30px;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  color: #2f2518;
 }
 
 .gomoku_panel {
+  width: min(100%, 980px);
   display: flex;
-  gap: 12px;
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  gap: 12px;
+  padding: 14px 16px;
+  background:
+    linear-gradient(120deg, #f8ead1, #eed0a0);
+  border: 1px solid rgba(96, 68, 29, 0.22);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 18px 36px rgba(44, 27, 8, 0.18);
+}
+
+.gomoku_title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .gomoku_panel strong {
-  font-size: 18px;
+  font-size: 22px;
+  letter-spacing: 0.02em;
+  color: #2b1f10;
+}
+
+.gomoku_status {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.gomoku_pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(96, 68, 29, 0.2);
+  font-weight: 600;
+  color: #3b2c1d;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.gomoku_player {
+  display: inline-flex;
+  align-items: center;
+}
+
+.gomoku_player.black {
+  color: #1c1815;
+}
+
+.gomoku_player.white {
+  color: #d3d3d3;
+}
+
+.gomoku_operation {
+  width: min(100%, 980px);
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.gomoku_operation button {
+  background: linear-gradient(140deg, #c18b4a, #a96f2c);
+  border: 1px solid rgba(70, 50, 28, 0.2);
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 10px 16px;
+  font-weight: 700;
+  box-shadow: 0 10px 20px rgba(41, 28, 11, 0.18);
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+}
+
+.gomoku_operation button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+  filter: grayscale(0.2);
+}
+
+.gomoku_operation button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px rgba(41, 28, 11, 0.22);
+  filter: brightness(1.02);
+}
+
+.gomoku_boardWrap {
+  width: min(100%, 980px);
+  margin: 0 auto;
+  padding: 16px;
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0)),
+    radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0)),
+    linear-gradient(135deg, #f2d8ae, #e5bd7e);
+  border: 1px solid rgba(96, 68, 29, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 20px 40px rgba(44, 27, 8, 0.18);
+  overflow: auto;
 }
 
 .gomoku_board {
   display: grid;
-  gap: 2px;
-  background: #dcb35c;
-  padding: 8px;
-  border-radius: 12px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  gap: 0;
+  background: linear-gradient(135deg, rgba(242, 210, 143, 0.95), rgba(231, 188, 104, 0.95));
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(96, 68, 29, 0.24);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 rgba(157, 108, 43, 0.25);
   user-select: none;
   width: max-content;
+  --cell-size: 36px;
 }
 
 .gomoku_cell {
-  background: linear-gradient(180deg, #e7c36a, #d1a348);
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 6px;
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(180deg, rgba(243, 203, 120, 0.92), rgba(226, 186, 98, 0.96));
+  border: 1px solid rgba(104, 68, 23, 0.18);
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.05s ease-out;
-  line-height: 1;
+  transition: transform 80ms ease, box-shadow 120ms ease;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(157, 108, 43, 0.22);
+  color: transparent;
+  padding: 0;
+}
+
+.gomoku_cell:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 rgba(157, 108, 43, 0.32),
+    0 6px 12px rgba(44, 27, 8, 0.15);
 }
 
 .gomoku_cell:active {
-  transform: scale(0.95);
+  transform: scale(0.98);
 }
 
 .gomoku_cell.win {
-  outline: 3px solid rgba(76, 192, 210, 0.6);
-  background: linear-gradient(135deg, #afd45a, #f3d767);
+  box-shadow:
+    inset 0 0 0 2px #b45a0f,
+    0 0 0 2px rgba(180, 90, 15, 0.25);
 }
 
-.gomoku_operation {
-  margin-bottom: 10px;
-  display: flex;
-  gap: 8px;
+.gomoku_stone {
+  position: absolute;
+  inset: calc(var(--cell-size) * 0.18);
+  border-radius: 50%;
+  box-shadow: 0 8px 12px rgba(24, 16, 6, 0.22);
 }
 
-.gomoku_operation button {
-  background: #4cc0d2;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  cursor: pointer;
-  font-size: 14px;
-  padding: 8px 16px;
-  transition: background-color 0.2s ease-in-out;
+.gomoku_stone.black {
+  background: radial-gradient(circle at 35% 35%, #636363 0%, #201b18 70%);
+}
+
+.gomoku_stone.white {
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #d7cfbf 75%);
+  box-shadow:
+    0 8px 12px rgba(24, 16, 6, 0.18),
+    inset 0 1px 4px rgba(255, 255, 255, 0.9);
+}
+
+.gomoku_intersection {
+  width: calc(var(--cell-size) * 0.2);
+  height: calc(var(--cell-size) * 0.2);
+  border-radius: 50%;
+  background: rgba(82, 55, 18, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.gomoku_pieceLabel {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: calc(var(--cell-size) * 0.65);
+  color: rgba(43, 31, 16, 0.55);
+  opacity: 0;
+}
+
+@media (max-width: 720px) {
+  .gomoku_panel {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .gomoku_operation {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .gomoku_boardWrap {
+    padding: 12px;
+  }
 }
 
 /* -------------------------- Dice roller styles -------------------------- */

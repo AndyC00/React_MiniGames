@@ -1,15 +1,15 @@
-import React, { useMemo, useState } from "react";
-
+import React, { useState } from "react";
 
 // const parameters
 const EMPTY = 0, BLACK = 1, WHITE = 2;
-const PIECE_CHAR = { [EMPTY]: "", [BLACK]: "🐮", [WHITE]: "🐷" };
+const PIECE_CHAR = { [EMPTY]: "", [BLACK]: "B", [WHITE]: "W" };
+const PLAYER_LABEL = { [BLACK]: "Black", [WHITE]: "White" };
 
 const DIRS = [
-    [0, 1],   // →
-    [1, 0],   // ↓
-    [1, 1],   // ↘
-    [1, -1],  // ↙
+    [0, 1],
+    [1, 0],
+    [1, 1],
+    [1, -1],
 ];
 
 // create the chesse board
@@ -52,7 +52,7 @@ function checkWinner(r, c, board) {
     if (color === EMPTY) return null;
 
     for (const [dr, dc] of DIRS) {
-        const line = collectLine(board, r, c, dr, dc, color);
+        const line = collectLine(board, r, c, dr, dc);
 
         if (line.length >= 5) return { winner: color, line }; // highlight the line of 5
     }
@@ -124,15 +124,25 @@ export default function Gomoku({ size = 19, cell = 36 }) {
     return (
         <div className="gomoku">
             <div className="gomoku_panel">
-                <strong>♟️Gomoku</strong>
-                <span>
-                    Turn: {current === BLACK ? <b>🐮</b> : <b>🐷</b>}
-                </span>
-                {winner && (
-                    <span>
-                        Winner: {winner === BLACK ? <b>Player 🐮</b> : <b>Player 🐷</b>}
+                <div className="gomoku_title">
+                    <strong>Gomoku</strong>
+                </div>
+                <div className="gomoku_status">
+                    <span className="gomoku_pill">
+                        Turn:{" "}
+                        <b className={`gomoku_player ${current === BLACK ? "black" : "white"}`}>
+                            {PLAYER_LABEL[current]}
+                        </b>
                     </span>
-                )}
+                    {winner && (
+                        <span className="gomoku_pill">
+                            Winner:{" "}
+                            <b className={`gomoku_player ${winner === BLACK ? "black" : "white"}`}>
+                                {PLAYER_LABEL[winner]}
+                            </b>
+                        </span>
+                    )}
+                </div>
             </div>
 
             <div className="gomoku_operation">
@@ -140,32 +150,41 @@ export default function Gomoku({ size = 19, cell = 36 }) {
                 <button onClick={handleReset}>Reset</button>
             </div>
 
-            <div
-                className="gomoku_board"
-                style={{
-                    gridTemplateColumns: `repeat(${size}, ${cell}px)`,
-                    gridTemplateRows: `repeat(${size}, ${cell}px)`,
-                }}
-            >
-                {board.map((row, r) =>
-                    row.map((val, c) => {
-                        const isWinCell = winningLine.some(
-                            ([rr, cc]) => rr === r && cc === c
-                        );
-                        return (
-                            <button
-                                key={`${r}-${c}`}
-                                className={`gomoku_cell ${isWinCell ? "win" : ""}`}
-                                onClick={() => handleCellClick(r, c)}
-                                aria-label={`row ${r + 1}, col ${c + 1}, ${val === EMPTY ? "empty" : val === BLACK ? "black" : "white"
-                                    }`}
-                                style={{ fontSize: `${Math.floor(cell * 0.7)}px` }}
-                            >
-                                {PIECE_CHAR[val]}
-                            </button>
-                        );
-                    })
-                )}
+            <div className="gomoku_boardWrap">
+                <div
+                    className="gomoku_board"
+                    style={{
+                        gridTemplateColumns: `repeat(${size}, var(--cell-size))`,
+                        gridTemplateRows: `repeat(${size}, var(--cell-size))`,
+                        "--cell-size": `${cell}px`,
+                    }}
+                >
+                    {board.map((row, r) =>
+                        row.map((val, c) => {
+                            const isWinCell = winningLine.some(
+                                ([rr, cc]) => rr === r && cc === c
+                            );
+                            const piece = val === EMPTY ? null : val === BLACK ? "black" : "white";
+
+                            return (
+                                <button
+                                    key={`${r}-${c}`}
+                                    className={`gomoku_cell ${isWinCell ? "win" : ""}`}
+                                    onClick={() => handleCellClick(r, c)}
+                                    aria-label={`row ${r + 1}, col ${c + 1}, ${piece ? `${piece} stone` : "empty"
+                                        }`}
+                                    data-piece={piece || ""}
+                                >
+                                    {piece && <span className={`gomoku_stone ${piece}`} aria-hidden />}
+                                    {!piece && <span className="gomoku_intersection" aria-hidden />}
+                                    <span className="gomoku_pieceLabel" aria-hidden>
+                                        {PIECE_CHAR[val]}
+                                    </span>
+                                </button>
+                            );
+                        })
+                    )}
+                </div>
             </div>
         </div>
     );
