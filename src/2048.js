@@ -9,6 +9,21 @@ const STORAGE_KEY = `react2048`; // for local storage
 const CELL_PX = 80; // height and width for .cell2048 (css modify needed if changed)
 const GAP_PX = 10;  // gap for .grid2048
 const PAD_PX = 10;  // padding for .grid2048 (css modify needed if changed)
+const MOBILE_BREAKPOINT = 600;
+const MOBILE_CELL_PX = 64;
+const MOBILE_GAP_PX = 8;
+const MOBILE_PAD_PX = 8;
+
+function getBoardMetrics() {
+  if (typeof window === "undefined") {
+    return { cellPx: CELL_PX, gapPx: GAP_PX, padPx: PAD_PX };
+  }
+
+  const compact = window.innerWidth <= MOBILE_BREAKPOINT;
+  return compact
+    ? { cellPx: MOBILE_CELL_PX, gapPx: MOBILE_GAP_PX, padPx: MOBILE_PAD_PX }
+    : { cellPx: CELL_PX, gapPx: GAP_PX, padPx: PAD_PX };
+}
 
 // ------------------ helper functions ------------------
 function emptyBoard(size) {
@@ -246,9 +261,9 @@ function formatTileValue(v) {
 
 function keyOf(r, c) { return `${r}-${c}`; }
 
-function cellXY(r, c) {
-  const x = c * (CELL_PX + GAP_PX);
-  const y = r * (CELL_PX + GAP_PX);
+function cellXY(r, c, cellPx = CELL_PX, gapPx = GAP_PX) {
+  const x = c * (cellPx + gapPx);
+  const y = r * (cellPx + gapPx);
   return { x, y };
 }
 
@@ -285,6 +300,8 @@ export default function Game2048() {
   const [movingFrom, setMovingFrom] = useState(() => new Set());
   const [flashCells, setFlashCells] = useState(() => new Set());
   const [spawnCells, setSpawnCells] = useState(() => new Set());
+  const [boardMetrics, setBoardMetrics] = useState(() => getBoardMetrics());
+  const { cellPx, gapPx, padPx } = boardMetrics;
 
   const [best, setBest] = useState(() => {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -417,8 +434,23 @@ export default function Game2048() {
     return () => window.removeEventListener("keydown", onKey);
   }, [board, over]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+
+    const handleResize = () => setBoardMetrics(getBoardMetrics());
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const boardVars = {
+    "--cell2048-size": `${cellPx}px`,
+    "--cell2048-gap": `${gapPx}px`,
+    "--grid2048-pad": `${padPx}px`,
+  };
+
   return (
-    <div className="container2048">
+    <div className="container2048" style={boardVars}>
       <div className="panel2048">
         <div className="header2048">
           <div className="titleBlock2048">
@@ -494,8 +526,8 @@ export default function Game2048() {
           {/* render the moving nums */}
           <div className="animLayer2048">
             {animTiles.map((m, idx) => {
-              const from = cellXY(m.fromR, m.fromC);
-              const to = cellXY(m.toR, m.toC);
+              const from = cellXY(m.fromR, m.fromC, cellPx, gapPx);
+              const to = cellXY(m.toR, m.toC, cellPx, gapPx);
               const dx = to.x - from.x;
               const dy = to.y - from.y;
 
